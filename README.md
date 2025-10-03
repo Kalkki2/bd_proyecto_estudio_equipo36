@@ -11,8 +11,8 @@
 - Encina, Nahuel
 
 ## Índice
-[Capítulo I: Introducción](#capítulo-i-introducción)
-[Capítulo IV: Desarrollo del Tema / Resultados](#capítulo-iv-desarrollo-del-tema--resultados)
+- [Capítulo I: Introducción](#capítulo-i-introducción)
+- [Capítulo IV: Desarrollo del Tema / Resultados](#capítulo-iv-desarrollo-del-tema--resultados)
 
 ---
 
