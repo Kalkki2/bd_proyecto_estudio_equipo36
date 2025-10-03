@@ -11,7 +11,8 @@
 - Encina, Nahuel
 
 ## Índice
-1. [Capítulo I: Introducción](#capítulo-i-introducción)
+[Capítulo I: Introducción](#capítulo-i-introducción)
+[Capítulo IV: Desarrollo del Tema / Resultados](#capítulo-iv-desarrollo-del-tema--resultados)
 
 ---
 
@@ -66,3 +67,10 @@ Se deben considerar las siguientes restricciones en el diseño físico:
 - Mejorar la organización y acceso a la información de mascotas y dueños.
 - Facilitar el registro y seguimiento de citas médicas y tratamientos.
 - Asegurar la integridad y seguridad de los datos.
+
+## CAPÍTULO IV: DESARROLLO DEL TEMA / RESULTADOS
+## Diseño del modelo relacional para el sistema: Gestión Veterinaria.
+Este modelo captura la estructura básica de un sistema para registrar información sobre dueños, mascotas, citas veterinarias, tratamientos y medicamentos utilizado en la clínica veterinaria.
+
+## Diagrama relacional
+![image alt](https://github.com/Kalkki2/bd_proyecto_estudio_equipo36/blob/aacb6835c241d76cc9752af2823fd95d59820726/docs/Modelo_Relacional_Veterinaria.png)
