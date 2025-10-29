@@ -69,9 +69,7 @@ Se deben considerar las siguientes restricciones en el diseño físico:
 <hr>
 
 ## CAPÍTULO II: MARCO CONCEPTUAL O REFERENCIAL
-## TEMA 1: PROCEDIMIENTOS ALMACENADOS Y FUNCIONES ALMACENADOS
-<br>
-
+## TEMA 1: PROCEDIMIENTOS ALMACENADOS Y FUNCIONES ALMACENADOS 
 ### *¿Qué son?*
 - **Procedimientos Almacenados:** Son bloques de código SQL que se guardan en la base de datos y se pueden ejecutar múltiples veces. Por ejemplo, puedes tener un procedimiento que registre una nueva cita médica para una mascota.
 
@@ -135,7 +133,6 @@ En una Clínica Veterinaria:
 - **Sobrecarga de rendimiento:** mantener las propiedades ACID consume más recursos.  
 - **Bloqueos concurrentes:** transacciones largas pueden generar esperas entre usuarios.  
 - **Mayor complejidad:** requiere planificación y diseño cuidadoso para evitar conflictos y pérdidas de rendimiento.  
-<br>
 
 ### TEMA 4: MANEJO DE DATOS JSON
 ### *¿Qué es JSON?*
