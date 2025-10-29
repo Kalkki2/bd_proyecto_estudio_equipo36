@@ -193,7 +193,7 @@ Para llevar a cabo este proyecto, utilizamos una variedad de herramientas que fa
 Este modelo captura la estructura básica de un sistema para registrar información sobre dueños, mascotas, citas veterinarias, tratamientos y medicamentos utilizado en la clínica veterinaria.
 
 ## Diagrama relacional
-![image alt](docs/modelo_relacional_veterinaria.png)
+![image alt](./docs/modelo_relacional_veterinaria.png)
 
 ## Diccionario de datos
 Acceso al documento [PDF](docs/diccionario_datos_veterinaria.pdf) del diccionario de datos.
