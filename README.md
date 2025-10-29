@@ -14,8 +14,6 @@
 - [Capítulo I: Introducción](#capítulo-i-introducción)
 - [Capítulo IV: Desarrollo del Tema / Resultados](#capítulo-iv-desarrollo-del-tema--resultados)
 
-
-
 ## CAPÍTULO I: INTRODUCCIÓN
 
 ### Caso de estudio
@@ -104,12 +102,12 @@ En el contexto de la clínica veterinaria, la optimización de consultas a trav�
 
 ## TEMA 3: MANEJO DE TRANSACCIONES Y TRANSACCIONES ANIDADAS
 
-## ¿Qué es una Transacción?
+## *¿Qué es una Transacción?*
 Una **transacción** es una unidad lógica de trabajo que agrupa una o varias operaciones de base de datos (`INSERT`, `UPDATE`, `DELETE`, incluso `SELECT`) que deben ejecutarse **todas o ninguna**.  
 
 En una **clínica veterinaria**, esto garantiza que los datos sobre pacientes, citas o tratamientos se mantengan **coherentes y seguros**, incluso si ocurre un error durante el proceso.
 
-### Importancia y Uso 
+### *Importancia y Uso*
 En una Clínica Veterinaria:
 - **Registro de cita médica:** si se inserta una nueva cita, se debe guardar correctamente el veterinario, la mascota y el horario. Si uno de estos pasos falla, toda la operación se revierte.  
 - **Venta de medicamentos:** si se actualiza el stock tras una venta, debe reducirse correctamente en inventario y registrarse en el historial de venta.  
@@ -139,16 +137,15 @@ En una Clínica Veterinaria:
 - **Mayor complejidad:** requiere planificación y diseño cuidadoso para evitar conflictos y pérdidas de rendimiento.  
 <br>
 
-## TEMA 4: MANEJO DE DATOS JSON
-# ¿Qué es JSON?
+### TEMA 4: MANEJO DE DATOS JSON
+### *¿Qué es JSON?*
 
 **JSON (JavaScript Object Notation)** es un formato basado en texto utilizado para **almacenar e intercambiar datos** de manera legible tanto para humanos como para máquinas.  
 Es sencillo de aprender, fácil de depurar y ampliamente adoptado en el desarrollo de software moderno.  
 
 Aunque JSON se originó en el lenguaje **JavaScript**, hoy en día es un **formato universal** empleado en una gran variedad de lenguajes de programación y plataformas, gracias a su simplicidad y compatibilidad.
 
-## Importancia y Uso 
-
+## *Importancia y Uso*
 En una **clínica veterinaria**, JSON puede utilizarse para **intercambiar información entre el sistema interno y aplicaciones externas**, o para **comunicarse entre el frontend y el backend** de una aplicación web.  
 
 ### Ejemplos de uso:
