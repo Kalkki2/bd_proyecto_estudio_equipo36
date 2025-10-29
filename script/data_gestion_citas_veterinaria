@@ -1,0 +1,91 @@
+USE gestion_citas_veterinaria;
+GO
+
+INSERT INTO especialidad (id_especialidad, nombre) VALUES
+(1, 'Cirugia'),
+(2, 'Dermatologia'),
+(3, 'Cardiologia'),
+(4, 'Odontologia'),
+(5, 'Oftalmologia');
+
+
+INSERT INTO veterinario (id_veterinario, nombre, apellido, hora_entrada, hora_salida, nro_lic_profesional, id_especialidad) VALUES
+(1, 'Mariana', 'Suarez', '08:00', '16:00', 10001, 1),
+(2, 'Carlos', 'Lopez', '09:00', '17:00', 10002, 2),
+(3, 'Laura', 'Martinez', '10:00', '18:00', 10003, 3),
+(4, 'Julian', 'Perez', '08:30', '16:30', 10004, 4),
+(5, 'Andrea', 'Gomez', '09:30', '17:30', 10005, 5);
+
+
+INSERT INTO duenio (id_duenio, nombre, apellido, direccion, dni, telefono, email) VALUES
+(1, 'Lucia', 'Ramirez', 'Av. Siempre Viva 123', 45123987, 1134567890, 'lucia.ramirez@mail.com'),
+(2, 'Diego', 'Fernandez', 'Calle Falsa 456', 40231876, 1145678901, 'diego.fernandez@mail.com'),
+(3, 'Marcos', 'Sosa', 'Belgrano 789', 38976543, 1156789012, 'marcos.sosa@mail.com'),
+(4, 'Sofia', 'Herrera', 'San Martin 234', 37654321, 1167890123, 'sofia.herrera@mail.com'),
+(5, 'Nicolas', 'Luna', 'Rivadavia 321', 36543210, 1178901234, 'nicolas.luna@mail.com');
+
+
+INSERT INTO especie (id_especie, nombre) VALUES
+(1, 'Perro'),
+(2, 'Gato'),
+(3, 'Ave'),
+(4, 'Conejo'),
+(5, 'Reptil');
+
+
+INSERT INTO raza (id_raza, nombre, id_especie) VALUES
+(1, 'Labrador Retriever', 1),
+(2, 'Bulldog Frances', 1),
+(3, 'Siames', 2),
+(4, 'Persa', 2),
+(5, 'Canario', 3),
+(6, 'Rex', 4),
+(7, 'Iguana Verde', 5);
+
+
+INSERT INTO mascota (id_mascota, nombre, fecha_nacimiento, peso, condicion, id_duenio, id_raza, id_especie) VALUES
+(1, 'Toby', '2020-03-15', 22.5, 'Saludable', 1, 1, 1),
+(2, 'Milo', '2021-07-10', 11.2, 'Alergia cutanea', 2, 2, 1),
+(3, 'Luna', '2019-11-05', 4.5, 'Cardiopatia leve', 3, 3, 2),
+(4, 'Mishi', '2022-01-12', 3.8, 'Saludable', 4, 4, 2),
+(5, 'Paco', '2023-05-25', 0.15, 'Plumas opacas', 5, 5, 3);
+
+
+INSERT INTO laboratorio (id_laboratorio, nombre, direccion) VALUES
+(1, 'VetPharma', 'Av. Rivadavia 1000'),
+(2, 'AnimalCare Labs', 'Calle Mitre 456'),
+(3, 'BioVet Argentina', 'Av. Cordoba 789'),
+(4, 'PetHealth', 'San Martin 2345'),
+(5, 'Zoovet', 'Independencia 876');
+
+
+INSERT INTO medicamento (id_medicamento, nombre, monodroga, presentacion, id_laboratorio) VALUES
+(1, 'Antibiotico Plus', 'Amoxicilina', 'Tabletas 500mg', 1),
+(2, 'Dermavet', 'Hidrocortisona', 'Pomada 30g', 2),
+(3, 'CardioPet', 'Enalapril', 'Tabletas 10mg', 3),
+(4, 'OftalClear', 'Tobramicina', 'Colirio 10ml', 4),
+(5, 'Vermicid', 'Ivermectina', 'Solucion oral 20ml', 5);
+
+
+INSERT INTO tipo_tratamiento (id_tratamiento, nombre) VALUES
+(1, 'Antibiotico'),
+(2, 'Antiparasitario'),
+(3, 'Cardiaco'),
+(4, 'Topico'),
+(5, 'Ocular');
+
+
+INSERT INTO cita_medica (id_cita_medica, fecha_cita, motivo, observaciones, usuario, id_mascota, id_veterinario) VALUES
+(1, '2025-10-10', 'Chequeo general', 'Mascota en excelente estado.', 'admin', 1, 1),
+(2, '2025-09-22', 'Problemas en la piel', 'Alergia tratada con pomada.', 'admin', 2, 2),
+(3, '2025-08-15', 'Revision cardiaca', 'Se recomienda control mensual.', 'admin', 3, 3),
+(4, '2025-10-05', 'Control dental', 'Sin placa ni sarro.', 'admin', 4, 4),
+(5, '2025-09-30', 'Caida de plumas', 'Posible deficiencia nutricional.', 'admin', 5, 5);
+
+
+INSERT INTO tratamiento_mascota (fecha_inicio, dosis, fecha_fin, id_tratamiento, id_medicamento, id_cita_medica) VALUES
+('2025-10-10', '1 tableta cada 12h', '2025-10-17', 1, 1, 1),
+('2025-09-22', 'Aplicar 2 veces al dia', '2025-09-29', 4, 2, 2),
+('2025-08-15', '1 tableta diaria', '2025-09-15', 3, 3, 3),
+('2025-10-05', 'Aplicar cada 24h', '2025-10-12', 4, 4, 4),
+('2025-09-30', '0.5 ml cada 3 dias', '2025-10-14', 2, 5, 5);
