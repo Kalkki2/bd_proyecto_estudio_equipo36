@@ -6,12 +6,13 @@
 
 **Integrantes**
 - Albarracin, Anibal
-- Beck, Pablo Adrian
+- Beck, Pablo Adrián
 - Diaz, Federico Hilario
-- Encina, Nahuel
 
 ## Índice
 - [Capítulo I: Introducción](#capítulo-i-introducción)
+- [CAPÍTULO II: MARCO CONCEPTUAL O REFERENCIAL](#capítulo-ii-marco-conceptual-o-referencial)
+- [CAPÍTULO III: METODOLOGÍA](#capítulo-iii-metodología)
 - [Capítulo IV: Desarrollo del Tema / Resultados](#capítulo-iv-desarrollo-del-tema--resultados)
 
 ## CAPÍTULO I: INTRODUCCIÓN
@@ -197,3 +198,15 @@ Este modelo captura la estructura básica de un sistema para registrar informaci
 
 ## Diccionario de datos
 Acceso al documento [PDF](docs/diccionario_datos_veterinaria.pdf) del diccionario de datos.
+
+### Desarrollo TEMA 1: Procedimientos y Funciones Almacenadas
+
+Un procedimiento almacenado en SQL Server es un conjunto de instrucciones SQL o una referencia a un método .NET CLR, similar a funciones en otros lenguajes de programación...
+
+> Acceder a la siguiente carpeta para la descripción completa del tema [scripts-> Procedimientos y Funciones Almacenadas](script/tema01_procedimientosFuncionesAlmacenadas)
+
+### Desarrollo TEMA 2: Optimización de Consultas a través de Índices
+
+Un índice en una base de datos es una estructura adicional, es una estructura de disco asociada y contiene claves generadas a partir de una o varias columnas de la tabla o la vista... 
+
+> Acceder a la siguiente carpeta para la descripción completa del tema [scripts-> Optimizacion de Consultas atravez de Indices](script/tema02_optimizacionConsultasAtravezdeIndices)
