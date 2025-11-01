@@ -14,6 +14,8 @@
 - [CAPÍTULO II: MARCO CONCEPTUAL O REFERENCIAL](#capítulo-ii-marco-conceptual-o-referencial)
 - [CAPÍTULO III: METODOLOGÍA](#capítulo-iii-metodología)
 - [Capítulo IV: Desarrollo del Tema / Resultados](#capítulo-iv-desarrollo-del-tema--resultados)
+- [CAPÍTULO V: CONCLUSIONES](#capítulo-v-conclusiones)
+- [CAPÍTULO VI: BIBLIOGRAFÍA](#capítulo-vi-bibliografía)
 
 ## CAPÍTULO I: INTRODUCCIÓN
 
@@ -67,7 +69,6 @@ Se deben considerar las siguientes restricciones en el diseño físico:
 - Facilitar el registro y seguimiento de citas médicas y tratamientos.
 - Asegurar la integridad y seguridad de los datos.
 
-<hr>
 
 ## CAPÍTULO II: MARCO CONCEPTUAL O REFERENCIAL
 ## TEMA 1: PROCEDIMIENTOS ALMACENADOS Y FUNCIONES ALMACENADOS 
@@ -85,7 +86,6 @@ En el contexto de la clínica veterinaria, los procedimientos y funciones almace
 - **Mantenimiento:** Facilitan el mantenimiento del código. Si se necesita realizar un cambio en la forma en que se registra una cita, solo hay que actualizar el procedimiento almacenado una vez, en lugar de cambiar cada consulta SQL que se use en la aplicación.<br>
 
 Los procedimientos y funciones almacenadas son herramientas poderosas en la gestión de bases de datos. En una clínica veterinaria, su implementación no solo optimiza el manejo de datos, sino que también mejora la seguridad y el mantenimiento de la información crítica sobre mascotas, dueños, citas y tratamientos. Al utilizarlas, puedes asegurar un sistema de gestión más eficiente y confiable.
-<br>
 
 ## TEMA 2: OPTIMIZACIÓN DE CONSULTAS MEDIANTES ÍNDICES
 ### *¿Qué son?*
@@ -161,8 +161,6 @@ JSON permite que estos datos se transmitan de forma **rápida, estructurada y si
 **Fácil de analizar (parsear)**  Se puede convertir rápidamente a estructuras de datos internas.  Convertir datos JSON a objetos o arrays en la aplicación. 
 
 
-<hr> 
-
 ## CAPÍTULO III: METODOLOGÍA
 El proyecto lo llevamos a cabo mediante la búsqueda individual de información respecto al funcionamiento de bases de datos en clínicas veterinarias para así tener un mejor panorama a la hora de realizar las reuniones tanto virtuales como presenciales, donde expusimos nuestras ideas y posibles problemas que pudieran surgir a medida que avanzara el proyecto.
 
@@ -187,7 +185,6 @@ Para llevar a cabo este proyecto, utilizamos una variedad de herramientas que fa
 **MySQL - XAMPP:** Utilizamos XAMPP, una distribución de Apache fácil de instalar. Importamos el código SQL en MySQL a través de XAMPP para generar el diccionario de datos, lo que facilitó la organización y documentación de la estructura de la base de datos.<br>
 **Herramientas online de IA:** Utilizamos diversas herramientas de inteligencia artificial disponibles en línea para obtener sugerencias y optimizar el código, así como para resolver problemas específicos que surgieron durante el desarrollo del proyecto.<br>
 
-<hr>
 
 ## CAPÍTULO IV: DESARROLLO DEL TEMA / RESULTADOS
 ## Diseño del modelo relacional para el sistema: Gestión Veterinaria.
@@ -229,4 +226,5 @@ Cada uno aportó su perspectiva única, lo que no solo mejoró el resultado fina
 
 ## CAPÍTULO VI: BIBLIOGRAFÍA
  1. https://learn.microsoft.com/es-es/sql/?view=sql-server-ver16
- 2. https://www.oracle.com/latam/database/what-is-json/
+ 2. https://learn.microsoft.com/es-es/sql/t-sql/language-elements/transactions-transact-sql?view=sql-server-ver17
+ 3. https://www.oracle.com/latam/database/what-is-json/
