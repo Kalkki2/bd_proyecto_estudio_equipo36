@@ -210,3 +210,23 @@ Un procedimiento almacenado en SQL Server es un conjunto de instrucciones SQL o 
 Un índice en una base de datos es una estructura adicional, es una estructura de disco asociada y contiene claves generadas a partir de una o varias columnas de la tabla o la vista... 
 
 > Acceder a la siguiente carpeta para la descripción completa del tema [scripts-> Optimizacion de Consultas atravez de Indices](script/tema02_optimizacionConsultasAtravezdeIndices)
+
+## CAPÍTULO V: CONCLUSIONES
+
+El estudio de los procedimientos y funciones almacenadas, la optimización de consultas mediante índices, el manejo de transacciones y el uso de datos en formato JSON demuestra la importancia de un enfoque integral en el diseño y administración de bases de datos en SQL Server.
+Cada uno de estos componentes contribuye de manera esencial al rendimiento, la integridad y la interoperabilidad del sistema.
+
+En el contexto de una clínica veterinaria, estos conceptos permiten desarrollar una base de datos robusta, eficiente y confiable, donde las operaciones diarias —como registrar citas, gestionar tratamientos o controlar medicamentos— se ejecutan con rapidez y seguridad.
+El uso de procedimientos almacenados y transacciones asegura la coherencia de la información; los índices optimizan el acceso a los datos, y la integración con JSON facilita la comunicación con otras aplicaciones y servicios externos.
+
+En conjunto, estas herramientas consolidan una gestión moderna y escalable, capaz de adaptarse a las necesidades cambiantes de un entorno clínico digital, garantizando precisión, eficiencia y continuidad operativa en el manejo de la información veterinaria.
+
+### Reflexión sobre la experiencia de trabajo en equipo
+
+Este proyecto fue, sin duda, una experiencia enriquecedora, especialmente porque se llevó a cabo en grupo. La colaboración entre todos los miembros fue clave para lograr un análisis exhaustivo y obtener resultados sólidos. El trabajo en equipo nos permitió combinar diferentes enfoques y conocimientos, lo que enriqueció la calidad de las soluciones implementadas. Además, compartir ideas, discutir enfoques y superar juntos los desafíos fue una parte fundamental del proceso.
+
+Cada uno aportó su perspectiva única, lo que no solo mejoró el resultado final, sino que también nos permitió aprender unos de otros. Hubo momentos de debate intenso, risas y descubrimientos, lo que hizo que esta experiencia fuera no solo productiva, sino también gratificante a nivel personal y profesional. En definitiva, este proyecto nos mostró el valor de la colaboración y el aprendizaje compartido, dejando claro que el trabajo en equipo no solo divide las tareas, sino que multiplica los logros.
+
+## CAPÍTULO VI: BIBLIOGRAFÍA
+ 1. https://learn.microsoft.com/es-es/sql/?view=sql-server-ver16
+ 2. https://www.oracle.com/latam/database/what-is-json/
