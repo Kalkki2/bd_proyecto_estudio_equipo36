@@ -77,10 +77,9 @@ CREATE TABLE cita_medica(
   fecha_cita DATE NOT NULL CONSTRAINT df_cita_medica_fecha_cita DEFAULT GETDATE(),
   motivo VARCHAR(150) NOT NULL,
   observaciones VARCHAR(250) NOT NULL ,
-  usuario VARCHAR(100) NOT NULL  CONSTRAINT df_cita_medica_usario DEFAULT SYSTEM_USER FOR usuario;,
+  usuario VARCHAR(100) NOT NULL  CONSTRAINT df_cita_medica_usario DEFAULT SYSTEM_USER FOR usuario,
   id_mascota INT NOT NULL,
   id_veterinario INT NOT NULL,
-
   CONSTRAINT pk_cita_medica PRIMARY KEY (id_cita_medica),
   CONSTRAINT fk_cita_medica_mascota FOREIGN KEY (id_mascota) REFERENCES mascota(id_mascota),
   CONSTRAINT fk_cita_medica_veterinario FOREIGN KEY (id_veterinario)REFERENCES veterinario(id_veterinario)

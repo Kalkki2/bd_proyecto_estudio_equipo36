@@ -1,4 +1,4 @@
-use gestion_veterinaria
+use gestion_citas_veterinaria
 
 -----------------------------------------------------------------------------------------------------------------
 
@@ -10,10 +10,10 @@ SELECT nombre_mascota, DATEDIFF(YEAR, fecha_nacimiento, GETDATE()) AS Edad
 FROM Mascota;
 
 -- Ejecucion del procedimiento almacenado 
-EXEC ObtenerEdadMascota;
+EXEC obtener_edad_mascota;
 
 -- Usamos la función en una consulta
-SELECT nombre_mascota, dbo.CalcularEdad(fecha_nacimiento) AS Edad
+SELECT nombre_mascota, dbo.calcular_edad_mascota(fecha_nacimiento) AS Edad
 FROM Mascota;
 
 SET STATISTICS TIME OFF;
@@ -39,7 +39,7 @@ PRINT '---------------------------------------';
 SET STATISTICS TIME ON;
 SET STATISTICS IO ON;
 
-EXEC ObtenerEdadMascota;
+EXEC obtener_edad_mascota;
 
 SET STATISTICS TIME OFF;
 SET STATISTICS IO OFF;
@@ -50,7 +50,7 @@ PRINT '---------------------------------------';
 SET STATISTICS TIME ON;
 SET STATISTICS IO ON;
 
-SELECT nombre_mascota, dbo.CalcularEdad(fecha_nacimiento) AS Edad
+SELECT nombre_mascota, dbo.calcular_edad_mascota(fecha_nacimiento) AS Edad
 FROM Mascota;
 
 SET STATISTICS TIME OFF;

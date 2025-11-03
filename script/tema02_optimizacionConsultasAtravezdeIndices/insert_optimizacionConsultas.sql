@@ -1,126 +1,106 @@
-
---Carga de datos esta en tema04_indicesColumnares/inserts_indicesColumnares.sql
-
 -------------------------------------------------------------------------------------------
--- Ver Indices asociados a una tabla
+-- Ver 铆ndices asociados a una tabla
 SELECT name 
 FROM sys.indexes 
-WHERE object_id = OBJECT_ID('CitasMedicaNew') 
+WHERE object_id = OBJECT_ID('citas_medica_new') 
   AND is_primary_key = 0 
   AND is_unique = 0;
 -----------------------------------------------------------------------------------------------
---Elimina el indice IDX_gastoNEW de la tabla gastoNew
-DROP INDEX IX_Columnar_CitasMedicaNew ON CitasMedicaNew; 
 
---INDICE AGRUPADO CLUESTER
+-- Elimina el 铆ndice IX_columnar_citas_medica_new de la tabla citas_medica_new
+DROP INDEX ix_columnar_citas_medica_new ON citas_medica_new; 
 
-CREATE CLUSTERED INDEX IX_Columnar_CitasMedicaNew ON CitasMedicaNew (fecha_citaMedica);
+-- 脥ndice agrupado (clustered)
+CREATE CLUSTERED INDEX ix_columnar_citas_medica_new 
+ON citas_medica_new (fecha_citaMedica);
 
---INDICE AGRUPADO CLUESTER
-CREATE COLUMNSTORE INDEX IX_Columnar_CitasMedicaNew ON CitasMedica (fecha_citaMedica, id_mascota, id_veterinario);
+-- 脥ndice columnstore
+CREATE COLUMNSTORE INDEX ix_columnar_citas_medica 
+ON citas_medica (fecha_citaMedica, id_mascota, id_veterinario);
 
---Elimina el indice IDX_gastoNEW de la tabla gastoNew
-DROP INDEX IX_Columnar_CitasMedicaNew ON CitasMedicaNew; 
+-- Elimina nuevamente el 铆ndice de prueba
+DROP INDEX ix_columnar_citas_medica_new ON citas_medica_new; 
 -------------------------------------------------------------------------------------------------
 
--- INSERT 1 millon de datos Cita medica tabla de mayor ocurrencia 
--- Duplicar Mascotas ya creadas 
+-- Duplicaci贸n de registros para generar gran volumen de datos (1 mill贸n aprox.)
+-- Duplicar mascotas existentes
+INSERT INTO mascota (nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_duenio, id_raza)
+SELECT nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_duenio, id_raza
+FROM mascota;
 
---Ejecutar varias veces para tener un lote grande de mascotas 
-INSERT INTO Mascota (nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_dueno, id_raza)
-SELECT nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_dueno, id_raza
-FROM Mascota;
-
--- Ejecutar varias veces para poder llegar al millon de insersiones en cita medica 
-WITH CTE AS (
-    SELECT  nro_licProfesional + ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS nuevo_nro_licProfesional,
-            nombre_profesional,
-            hora_entrada,
-            hora_salida,
-            id_especialidad
-    FROM Veterinario
+-- Duplicar veterinarios existentes con n煤mero de licencia nuevo
+WITH cte_veterinario AS (
+    SELECT nro_licProfesional + ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS nuevo_nro_licProfesional,
+           nombre_profesional,
+           hora_entrada,
+           hora_salida,
+           id_especialidad
+    FROM veterinario
 )
-INSERT INTO Veterinario (nro_licProfesional, nombre_profesional, hora_entrada, hora_salida, id_especialidad)
-SELECT  nuevo_nro_licProfesional,
-        nombre_profesional,
-        hora_entrada,
-        hora_salida,
-        id_especialidad
-FROM CTE
+INSERT INTO veterinario (nro_licProfesional, nombre_profesional, hora_entrada, hora_salida, id_especialidad)
+SELECT nuevo_nro_licProfesional,
+       nombre_profesional,
+       hora_entrada,
+       hora_salida,
+       id_especialidad
+FROM cte_veterinario
 WHERE NOT EXISTS (
     SELECT 1 
-    FROM Veterinario v 
-    WHERE v.nro_licProfesional = CTE.nuevo_nro_licProfesional
+    FROM veterinario v 
+    WHERE v.nro_licProfesional = cte_veterinario.nuevo_nro_licProfesional
 );
 
---FIN DE LA FUNCION DUPLICAR VET
-
-
-
-
-
-
-
-
-
-
--- Creamos una nueva tabla
-CREATE TABLE CitasMedicaNew
-(
-  id_citaMedica INT IDENTITY(1,1),
+-----------------------------------------------------------------------------------------------
+-- Creaci贸n de la nueva tabla citas_medica_new
+CREATE TABLE citas_medica_new (
+  id_citas_medica INT IDENTITY(1,1),
   fecha_citaMedica DATE NOT NULL DEFAULT GETDATE(),
-  observaciones_citaMedica VARCHAR(70) NOT NULL,
+  observaciones_citas_medica VARCHAR(70) NOT NULL,
   usuario VARCHAR(50) NOT NULL DEFAULT SYSTEM_USER,
   motivo_visita VARCHAR(50) NOT NULL,
   id_mascota INT NOT NULL,
   id_veterinario INT NOT NULL,
-  CONSTRAINT PK_CitasMedicaNew_id PRIMARY KEY (id_citaMedica),
-  CONSTRAINT FK_CitasMedicaNew_id_mascota FOREIGN KEY (id_mascota) REFERENCES Mascota(id_mascota),
-  CONSTRAINT FK_CitasMedicaNew_id_veterinario FOREIGN KEY (id_veterinario) REFERENCES Veterinario(id_veterinario)
+  CONSTRAINT pk_citas_medica_new_id PRIMARY KEY (id_citas_medica),
+  CONSTRAINT fk_citas_medica_new_id_mascota FOREIGN KEY (id_mascota) REFERENCES mascota(id_mascota),
+  CONSTRAINT fk_citas_medica_new_id_veterinario FOREIGN KEY (id_veterinario) REFERENCES veterinario(id_veterinario)
 );
 
+-- Verificaci贸n de registros
+SELECT COUNT(*) FROM citas_medica_new;
 
-select count(*) from CitasMedicaNew
-
-
-
-
-
--- Carga masiva de datos en la tabla CitaMedicaNew
-INSERT INTO CitasMedicaNew (fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario)
+-----------------------------------------------------------------------------------------------
+-- Carga masiva de datos en la tabla citas_medica_new
+INSERT INTO citas_medica_new (fecha_citaMedica, observaciones_citas_medica, usuario, motivo_visita, id_mascota, id_veterinario)
 SELECT TOP 1000000
   DATEADD(day, CAST(5000 * RAND(CHECKSUM(NEWID())) + 1 AS INT), '2010-01-01') AS fecha_citaMedica,
-  'Observaci髇 generada' AS observaciones_citaMedica,
+  'Observaci贸n generada' AS observaciones_citas_medica,
   SYSTEM_USER AS usuario,
   'Consulta general' AS motivo_visita,
-  m.id_mascota AS id_mascota,  -- Selecci髇 de id_mascota v醠idos de la tabla Mascota
-  v.id_veterinario AS id_veterinario  -- Selecci髇 de id_veterinario v醠idos de la tabla Veterinario
-FROM Mascota m
-JOIN Veterinario v ON 1 = 1;  -- Este JOIN asegura que tomas todos los id_veterinario disponibles
+  m.id_mascota AS id_mascota,
+  v.id_veterinario AS id_veterinario
+FROM mascota m
+JOIN veterinario v ON 1 = 1;
 
-
-
--- Carga masiva de datos en la tabla CitaMedica
-INSERT INTO CitasMedica (fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario)
+-----------------------------------------------------------------------------------------------
+-- Carga masiva en la tabla principal citas_medica
+INSERT INTO citas_medica (fecha_citaMedica, observaciones_citas_medica, usuario, motivo_visita, id_mascota, id_veterinario)
 SELECT TOP 1000000
   DATEADD(day, CAST(5000 * RAND(CHECKSUM(NEWID())) + 1 AS INT), '2010-01-01') AS fecha_citaMedica,
-  'Observaci髇 generada' AS observaciones_citaMedica,
+  'Observaci贸n generada' AS observaciones_citas_medica,
   SYSTEM_USER AS usuario,
   'Consulta general' AS motivo_visita,
-  m.id_mascota AS id_mascota,  -- Selecci髇 de id_mascota v醠idos de la tabla Mascota
-  v.id_veterinario AS id_veterinario  -- Selecci髇 de id_veterinario v醠idos de la tabla Veterinario
-FROM Mascota m
-JOIN Veterinario v ON 1 = 1;  -- Este JOIN asegura que tomas todos los id_veterinario disponibles
+  m.id_mascota AS id_mascota,
+  v.id_veterinario AS id_veterinario
+FROM mascota m
+JOIN veterinario v ON 1 = 1;
 
-
--- Contador de registro total
+-----------------------------------------------------------------------------------------------
+-- Contador total de registros por tabla
 SELECT 
-t.name
- AS tabla, SUM(p.rows) AS row_count
+    t.name AS tabla, 
+    SUM(p.rows) AS row_count
 FROM sys.tables AS t
 INNER JOIN sys.partitions AS p ON t.object_id = p.object_id
-WHERE p.index_id IN (0, 1)  -- 0 para heaps (tablas sin 韓dice clustered) y 1 para 韓dices clustered
-GROUP BY 
-t.name
-
-ORDER BY row_count DESC; 
+WHERE p.index_id IN (0, 1)  -- 0 para heaps y 1 para 铆ndices clustered
+GROUP BY t.name
+ORDER BY row_count DESC;

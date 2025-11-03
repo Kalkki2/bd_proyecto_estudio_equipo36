@@ -1,4 +1,4 @@
-USE gestion_veterinaria
+USE gestion_citas_veterinaria;
 GO
 SELECT * 
 FROM sys.objects 
@@ -14,8 +14,8 @@ GO
 -- La función CalcularEdad utilizada sobre 1 consulta 
 SELECT * FROM Mascota
 
-SELECT nombre_mascota, dbo.CalcularEdadMascota(fecha_nacimiento) AS Edad
-FROM Mascota
+SELECT nombre_mascota, dbo.calcular_edad_mascota(fecha_nacimiento) AS Edad
+FROM mascota
 WHERE id_mascota = 1;
 GO
 
@@ -26,8 +26,8 @@ GO
 
 ---------------------------------------------------------------------------------------------------------------------------
 -- Calculo el Indice Masa corporal
-SELECT nombre_mascota, dbo.CalcularIMCMascotaSimplificado(peso_mascota) AS IMC
-FROM Mascota;
+SELECT nombre_mascota, dbo.calcular_imc_mascota(peso_mascota, 3) AS IMC
+FROM mascota;
 GO
 
 ---------------------------------------------------------------------------------------------------------------------------

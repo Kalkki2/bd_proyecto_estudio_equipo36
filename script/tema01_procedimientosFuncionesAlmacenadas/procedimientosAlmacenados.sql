@@ -1,4 +1,4 @@
-USE gestion_veterinaria;
+USE gestion_citas_veterinaria;
 GO
 
 --- Ver todos los procedimientos almacenados de la base de datos  
@@ -8,30 +8,29 @@ ORDER BY name;
 GO
 
 -- Ver el detalle de un procedimiento almacenado 
-EXEC sp_helptext 'DeleteEspecie';
+EXEC sp_helptext 'Deleteespecie';
 
 
 -----------------------------------------------------------------------------------------------------------------------------
 ------ INSERTS ---------------
 -----------------------------------------------------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS InsertMascota;
+DROP PROCEDURE IF EXISTS insert_mascota;
 GO
 
-
-CREATE PROCEDURE InsertMascota
+CREATE PROCEDURE insert_mascota
     @nombre_mascota VARCHAR(10),
     @fecha_nacimiento DATE,
     @peso_mascota FLOAT,
     @condicion_mascota VARCHAR(50),
-    @id_dueno INT,
+    @id_duenio INT,
     @id_raza INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM Dueno WHERE id_dueno = @id_dueno) AND
-       EXISTS (SELECT 1 FROM Raza WHERE id_raza = @id_raza)
+    IF EXISTS (SELECT 1 FROM duenio WHERE id_duenio = @id_duenio) AND
+       EXISTS (SELECT 1 FROM raza WHERE id_raza = @id_raza)
     BEGIN
-        INSERT INTO Mascota (nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_dueno, id_raza)
-        VALUES (@nombre_mascota, @fecha_nacimiento, @peso_mascota, @condicion_mascota, @id_dueno, @id_raza);
+        INSERT INTO mascota (nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_duenio, id_raza)
+        VALUES (@nombre_mascota, @fecha_nacimiento, @peso_mascota, @condicion_mascota, @id_duenio, @id_raza);
     END
     ELSE
     BEGIN
@@ -42,30 +41,30 @@ GO
 
 
 -------------------------------------------------------------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS InsertarEspecie;
+DROP PROCEDURE IF EXISTS insertar_especie;
 GO
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE InsertarEspecie
+CREATE PROCEDURE insertar_especie
     @nombre VARCHAR(30)
 AS
 BEGIN
-    INSERT INTO Especie (nombre_especie)
+    INSERT INTO especie (nombre_especie)
     VALUES (@nombre);
 END
 GO
 -------------------------------------------------------------------------------------------------------------------------------------
 
-DROP PROCEDURE IF EXISTS InsertarRaza;
+DROP PROCEDURE IF EXISTS insertar_raza;
 GO
 
-CREATE PROCEDURE InsertarRaza
+CREATE PROCEDURE insertar_raza
     @nombre_raza VARCHAR(30),
     @id_especie INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM Especie WHERE id_especie = @id_especie)
+    IF EXISTS (SELECT 1 FROM especie WHERE id_especie = @id_especie)
     BEGIN
-        INSERT INTO Raza (nombre_raza, id_especie)
+        INSERT INTO raza (nombre_raza, id_especie)
         VALUES (@nombre_raza, @id_especie);
     END
     ELSE
@@ -76,68 +75,68 @@ END
 GO
 
 -------------------------------------------------------------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS InsertarDueno;
+DROP PROCEDURE IF EXISTS insertar_duenio;
 GO
 
 
 
-CREATE PROCEDURE InsertarDueno
-    @nombre_dueno VARCHAR(50),
-    @apellido_dueno VARCHAR(50),
-    @dni_dueno VARCHAR(8),
-    @telefono_dueno BIGINT,
-    @email_dueno VARCHAR(50),
-    @direccion_dueno VARCHAR(50)
+CREATE PROCEDURE insertar_duenio
+    @nombre_duenio VARCHAR(50),
+    @apellido_duenio VARCHAR(50),
+    @dni_duenio VARCHAR(8),
+    @telefono_duenio BIGINT,
+    @email_duenio VARCHAR(50),
+    @direccion_duenio VARCHAR(50)
 AS
 BEGIN
-    INSERT INTO Dueno (nombre_dueno, apellido_dueno, dni_dueno, telefono_dueno, email_dueno, direccion_dueno)
-    VALUES (@nombre_dueno, @apellido_dueno, @dni_dueno, @telefono_dueno, @email_dueno, @direccion_dueno);
+    INSERT INTO duenio (nombre_duenio, apellido_duenio, dni_duenio, telefono_duenio, email_duenio, direccion_duenio)
+    VALUES (@nombre_duenio, @apellido_duenio, @dni_duenio, @telefono_duenio, @email_duenio, @direccion_duenio);
 END;
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS InsertarEspecialidad;
+DROP PROCEDURE IF EXISTS insertar_especialidad;
 GO
 
 
-CREATE PROCEDURE InsertarEspecialidad
+CREATE PROCEDURE insertar_especialidad
     @nombre VARCHAR(30)
 AS
 BEGIN
-    INSERT INTO Especialidad (nombre_especialidad)
+    INSERT INTO especialidad (nombre_especialidad)
     VALUES (@nombre);
 END;
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-DROP PROCEDURE IF EXISTS InsertarLaboratorio;
+DROP PROCEDURE IF EXISTS insertar_laboratorio;
 GO
 
 
-CREATE PROCEDURE InsertarLaboratorio
+CREATE PROCEDURE insertar_laboratorio
     @nombre_lab VARCHAR(60)
 AS
 BEGIN
-    INSERT INTO Laboratorio (nombre_lab)
+    INSERT INTO laboratorio (nombre_lab)
     VALUES (@nombre_lab);
 END
 GO
 
 -------------------------------------------------------------------------------------------------------------------------------------
 
-DROP PROCEDURE IF EXISTS InsertarMedicamento;
+DROP PROCEDURE IF EXISTS insertar_medicamento;
 GO
 
-CREATE PROCEDURE InsertarMedicamento
+CREATE PROCEDURE insertar_medicamento
     @nombre_comercial VARCHAR(50),
     @monodroga_medic VARCHAR(50),
     @presentacion_medic VARCHAR(50),
     @id_laboratorio INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM Laboratorio WHERE id_laboratorio = @id_laboratorio)
+    IF EXISTS (SELECT 1 FROM laboratorio WHERE id_laboratorio = @id_laboratorio)
     BEGIN
-        INSERT INTO Medicamento (nombre_comercial, monodroga_medic, presentacion_medic, id_laboratorio)
+        INSERT INTO medicamento (nombre_comercial, monodroga_medic, presentacion_medic, id_laboratorio)
         VALUES (@nombre_comercial, @monodroga_medic, @presentacion_medic, @id_laboratorio);
     END
     ELSE
@@ -149,10 +148,10 @@ GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
 
-DROP PROCEDURE IF EXISTS InsertarVeterinario;
+DROP PROCEDURE IF EXISTS insertar_veterinario;
 GO
 
-CREATE PROCEDURE InsertarVeterinario
+CREATE PROCEDURE insertar_veterinario
     @nro_licProfesional INT,
     @nombre_profesional VARCHAR(60),
     @hora_entrada TIME,
@@ -160,9 +159,9 @@ CREATE PROCEDURE InsertarVeterinario
     @id_especialidad INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM Especialidad WHERE id_especialidad = @id_especialidad)
+    IF EXISTS (SELECT 1 FROM especialidad WHERE id_especialidad = @id_especialidad)
     BEGIN
-        INSERT INTO Veterinario (nro_licProfesional, nombre_profesional, hora_entrada, hora_salida, id_especialidad)
+        INSERT INTO veterinario (nro_licProfesional, nombre_profesional, hora_entrada, hora_salida, id_especialidad)
         VALUES (@nro_licProfesional, @nombre_profesional, @hora_entrada, @hora_salida, @id_especialidad);
     END
     ELSE
@@ -174,10 +173,10 @@ GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
 
-DROP PROCEDURE IF EXISTS InsertarCitaMedica;
+DROP PROCEDURE IF EXISTS insertar_cita_medica;
 GO
 
-CREATE PROCEDURE InsertarCitaMedica
+CREATE PROCEDURE insertar_cita_medica
     @fecha_citaMedica DATE,
     @observaciones_citaMedica VARCHAR(70),
     @usuario VARCHAR(50),
@@ -186,10 +185,12 @@ CREATE PROCEDURE InsertarCitaMedica
     @id_veterinario INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM Mascota WHERE id_mascota = @id_mascota) AND
-       EXISTS (SELECT 1 FROM Veterinario WHERE id_veterinario = @id_veterinario)
+    IF EXISTS (SELECT 1 FROM mascota WHERE id_mascota = @id_mascota) AND
+       EXISTS (SELECT 1 FROM veterinario WHERE id_veterinario = @id_veterinario)
     BEGIN
-        INSERT INTO CitasMedica (fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario)
+        INSERT INTO citas_medica (
+			fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario
+		)
         VALUES (@fecha_citaMedica, @observaciones_citaMedica, @usuario, @motivo_visita, @id_mascota, @id_veterinario);
     END
     ELSE
@@ -200,246 +201,243 @@ END;
 GO;
 -------------------------------------------------------------------------------------------------------------------------------------
 
-DROP PROCEDURE IF EXISTS InsertarTratamiento;
+DROP PROCEDURE IF EXISTS insertar_tratamiento;
 GO
 
-CREATE PROCEDURE InsertarTratamiento
+CREATE PROCEDURE insertar_tratamiento
     @nombre_tratamiento VARCHAR(50),
     @inicio_tratamiento DATE,
     @fin_tratamiento DATE,
     @id_citaMedica INT
 AS
 BEGIN
-    IF EXISTS (SELECT 1 FROM CitasMedica WHERE id_citaMedica = @id_citaMedica)
+    IF EXISTS (SELECT 1 FROM citas_medica WHERE id_citaMedica = @id_citaMedica)
     BEGIN
-        INSERT INTO Tratamiento (nombre_tratamiento, inicio_tratamiento, fin_tratamiento, id_citaMedica)
+        INSERT INTO tratamiento (nombre_tratamiento, inicio_tratamiento, fin_tratamiento, id_citaMedica)
         VALUES (@nombre_tratamiento, @inicio_tratamiento, @fin_tratamiento, @id_citaMedica);
     END
     ELSE
     BEGIN
         RAISERROR('El ID de cita médica no existe.', 16, 1);
     END
-END;
-GO;
+END
+GO
 
 -----------------------------------------------------------------------------------------------------------------------------
 ------ GET ONE ---------------
 -----------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerEspeciePorID
+CREATE PROCEDURE obtener_especie_por_id
     @id_especie INT
 AS
 BEGIN
-    SELECT * FROM Especie WHERE id_especie = @id_especie;
+    SELECT * FROM especie WHERE id_especie = @id_especie;
 END;
 
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerRazaPorID
+CREATE PROCEDURE obtener_raza_por_id
     @id_raza INT
 AS
 BEGIN
-    SELECT * FROM Raza WHERE id_raza = @id_raza;
+    SELECT * FROM raza WHERE id_raza = @id_raza;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerDuenoPorDNI
+CREATE PROCEDURE obtener_duenio_por_dni
     @dni VARCHAR(8)
 AS
 BEGIN
-    SELECT * FROM Dueno WHERE dni_dueno = @dni;
+    SELECT * FROM duenio WHERE dni_duenio = @dni;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerEspecialidadPorID
+CREATE PROCEDURE obtener_especialidad_por_id
     @id_especialidad INT
 AS
 BEGIN
-    SELECT * FROM Especialidad WHERE id_especialidad = @id_especialidad;
+    SELECT * FROM especialidad WHERE id_especialidad = @id_especialidad;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerLaboratorioPorID
+CREATE PROCEDURE obtener_laboratorio_por_id
     @id_laboratorio INT
 AS
 BEGIN
-    SELECT * FROM Laboratorio WHERE id_laboratorio = @id_laboratorio;
+    SELECT * FROM laboratorio WHERE id_laboratorio = @id_laboratorio;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerMascotaId
+CREATE PROCEDURE obtener_mascota_id
     @id_mascota INT
 AS
 BEGIN
     SELECT m.id_mascota, m.nombre_mascota, m.fecha_nacimiento, m.peso_mascota, 
-           d.nombre_dueno, r.nombre_raza
-    FROM Mascota m
-    JOIN Dueno d ON m.id_dueno = d.id_dueno
-    JOIN Raza r ON m.id_raza = r.id_raza
+           d.nombre_duenio, r.nombre_raza
+    FROM mascota m
+    JOIN duenio d ON m.id_duenio = d.id_duenio
+    JOIN raza r ON m.id_raza = r.id_raza
     WHERE m.id_mascota = @id_mascota;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerMedicamentoPorID
+CREATE PROCEDURE obtener_medicamento_por_id
     @id_medicamento INT
 AS
 BEGIN
-    SELECT * FROM Medicamento WHERE id_medicamento = @id_medicamento;
+    SELECT * FROM medicamento WHERE id_medicamento = @id_medicamento;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerVeterinarioPorNroLicencia
+CREATE PROCEDURE obtener_veterinario_por_nro_licencia
     @nro_licencia INT
 AS
 BEGIN
-    SELECT * FROM Veterinario WHERE nro_licProfesional = @nro_licencia;
+    SELECT * FROM veterinario WHERE nro_licProfesional = @nro_licencia;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerCitaMedicaPorID
+CREATE PROCEDURE obtener_cita_medica_por_id
     @id_citaMedica INT
 AS
 BEGIN
-    SELECT * FROM CitasMedica WHERE id_citaMedica = @id_citaMedica;
+    SELECT * FROM citas_medica WHERE id_citaMedica = @id_citaMedica;
 END;
 
 GO;
 
 -------------------------------------------------------------------------------------------------------------------------------------
-CREATE PROCEDURE ObtenerMascotaPorID
+CREATE PROCEDURE obtener_mascota_por_id
     @id INT
 AS
 BEGIN
     SELECT *
-    FROM Mascota 
+    FROM mascota 
     WHERE id_mascota = @id;
 END;
 
 GO;
 
 -----------------------------------------------------------------------------------------------------------------------------
-
-CREATE PROCEDURE ObtenerDuenoPorDNI
+CREATE PROCEDURE obtener_duenio_por_dni
     @dni VARCHAR(8)
 AS
 BEGIN
     SELECT * 
-    FROM dueno
-    WHERE dni_dueno = @dni;
+    FROM duenio
+    WHERE dni_duenio = @dni;
 END; 
-
 GO;
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-CREATE PROCEDURE ObtenerEdadMascota
+CREATE PROCEDURE obtener_edad_mascota
 AS
 BEGIN
     SELECT nombre_mascota, DATEDIFF(YEAR, fecha_nacimiento, GETDATE()) AS Edad
-    FROM Mascota;
+    FROM mascota;
 END;
-GO
+GO;
 
 -----------------------------------------------------------------------------------------------------------------------------
 ------ UPDATE ---------------
 -----------------------------------------------------------------------------------------------------------------------------
 
-CREATE PROCEDURE UpdateMascota
+CREATE PROCEDURE update_mascota
     @id_mascota INT,
     @nombre_mascota VARCHAR(10),
     @fecha_nacimiento DATE,
     @peso_mascota FLOAT,
     @condicion_mascota VARCHAR(50),
-    @id_dueno INT,
+    @id_duenio INT,
     @id_raza INT
 AS
 BEGIN
-    UPDATE Mascota
+    UPDATE mascota
     SET nombre_mascota = @nombre_mascota,
         fecha_nacimiento = @fecha_nacimiento,
         peso_mascota = @peso_mascota,
         condicion_mascota = @condicion_mascota,
-        id_dueno = @id_dueno,
+        id_duenio = @id_duenio,
         id_raza = @id_raza
     WHERE id_mascota = @id_mascota;
 END;
-
 GO;
+
 -----------------------------------------------------------------------------------------------------------------------------
 
-CREATE PROCEDURE UpdateEspecie
+CREATE PROCEDURE update_especie
     @id INT,
     @nombre VARCHAR(30)
 AS
 BEGIN
-    UPDATE Especie
+    UPDATE especie
     SET nombre_especie = @nombre
     WHERE id_especie = @id;
 END;
-
 GO;
+
 -----------------------------------------------------------------------------------------------------------------------------
 
-CREATE PROCEDURE UpdateRaza
+CREATE PROCEDURE update_raza
     @id_raza INT,
     @nombre_raza VARCHAR(30),
     @id_especie INT
 AS
 BEGIN
-    UPDATE Raza
+    UPDATE raza
     SET nombre_raza = @nombre_raza,
         id_especie = @id_especie
     WHERE id_raza = @id_raza;
 END;
-
 GO;
 
 -------------------------------------------------------------------------
 -------- DELETE --------------------
 -------------------------------------------------------------------------
 
-CREATE PROCEDURE DeleteMascota
+CREATE PROCEDURE delete_mascota
     @id_mascota INT
 AS
 BEGIN
-    DELETE FROM Mascota
+    DELETE FROM mascota
     WHERE id_mascota = @id_mascota;
 END;
 GO;
 
 -----------------------------------------------------------------------------------------------------------------------------
 
-CREATE PROCEDURE DeleteEspecie
+CREATE PROCEDURE delete_especie
     @id INT
 AS
 BEGIN
-    DELETE FROM Especie
+    DELETE FROM especie
     WHERE id_especie = @id;
 END;
-
 GO;
+
 -----------------------------------------------------------------------------------------------------------------------------
 
-CREATE PROCEDURE DeleteRaza
+CREATE PROCEDURE delete_raza
     @id_raza INT
 AS
 BEGIN
-    DELETE FROM Raza
+    DELETE FROM raza
     WHERE id_raza = @id_raza;
 END;
 GO;

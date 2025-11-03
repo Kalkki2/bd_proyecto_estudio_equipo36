@@ -1,109 +1,109 @@
-USE gestion_veterinaria;
+USE gestion_citas_veterinaria;
 GO
 -----------------------------------------------------------------------------------------------------------------------------
-SELECT * FROM Especie 
+SELECT * FROM especie 
 SELECT * FROM Raza 
 -----------------------------------------------------------------------------------------------------------------------------
--- Inserciones de Mascota
-EXEC InsertMascota @nombre_mascota = 'Kamelon', @fecha_nacimiento = '2020-01-10', @peso_mascota = 5.5, @condicion_mascota = 'Saludable', @id_dueno = 1, @id_raza = 1;
+-- Inserciones de mascota
+EXEC insert_mascota @nombre_mascota = 'Kamelon', @fecha_nacimiento = '2020-01-10', 
+@peso_mascota = 5.5, @condicion_mascota = 'Saludable', @id_duenio = 1, @id_raza = 1;
 
-EXEC InsertMascota @nombre_mascota = 'BeiaLuna', @fecha_nacimiento = '2019-03-20', @peso_mascota = 8.2, @condicion_mascota = 'Vacunada', @id_dueno = 2, @id_raza = 2;
+EXEC insert_mascota @nombre_mascota = 'BeiaLuna', @fecha_nacimiento = '2019-03-20',
+@peso_mascota = 8.2, @condicion_mascota = 'Vacunada', @id_duenio = 2, @id_raza = 2;
 
-EXEC InsertMascota @nombre_mascota = 'Roberto', @fecha_nacimiento = '2018-08-15', @peso_mascota = 12.4, @condicion_mascota = 'En tratamiento', @id_dueno = 1, @id_raza = 1;
+EXEC insert_mascota @nombre_mascota = 'Roberto', @fecha_nacimiento = '2018-08-15',
+@peso_mascota = 12.4, @condicion_mascota = 'En tratamiento', @id_duenio = 1, @id_raza = 1;
+
+
 -----------------------------------------------------------------------------------------------------------------------------
--- Chequeo de insercion 
-SELECT * FROM Mascota 
-WHERE nombre_mascota = 'Maxsyle'  --Busco de esta forma porque el espacio de destinado al campo es chico por ahi me trunca los nombres
+-- Chequeo de inserción 
+SELECT * FROM mascota 
+WHERE nombre_mascota = 'Kamelon';
 
-SELECT * FROM Mascota 
-WHERE nombre_mascota = 'BellaVista'
+SELECT * FROM mascota 
+WHERE nombre_mascota = 'BeiaLuna';
 
-SELECT * FROM Mascota 
-WHERE nombre_mascota = 'RickyMarav'
+SELECT * FROM mascota 
+WHERE nombre_mascota = 'Roberto';
 
-SELECT * FROM Mascota 
-WHERE nombre_mascota like 'RickyMarav%'
+SELECT * FROM mascota 
+WHERE nombre_mascota LIKE 'RickyMarav%';
 -----------------------------------------------------------------------------------------------------------------------------
---Inseciones de Especie
+-- Inserciones de especie
 
-SELECT * FROM Especie 
+SELECT * FROM especie;
 
-EXEC InsertarEspecie @nombre = 'Canino';
-EXEC InsertarEspecie @nombre = 'Felino';
-EXEC InsertarEspecie @nombre = 'Ave';
+EXEC insertar_especie @nombre = 'Canino';
+EXEC insertar_especie @nombre = 'Felino';
+EXEC insertar_especie @nombre = 'Ave';
 
---Chequeo de las inserciones
-SELECT * FROM Especie WHERE nombre_especie = 'Canino'
-SELECT * FROM Especie WHERE nombre_especie = 'Felino'
-SELECT * FROM Especie WHERE nombre_especie = 'Ave'
+-- Chequeo de las inserciones
+SELECT * FROM especie WHERE nombre_especie = 'Canino';
+SELECT * FROM especie WHERE nombre_especie = 'Felino';
+SELECT * FROM especie WHERE nombre_especie = 'Ave';
 -----------------------------------------------------------------------------------------------------------------------------
---Inseciones de Raza
-SELECT * FROM Raza 
+-- Inserciones de raza
+SELECT * FROM raza;
 
-EXEC InsertarRaza @nombre_raza = 'Labrador', @id_especie = 51;
-EXEC InsertarRaza @nombre_raza = 'Persa', @id_especie = 52;
-EXEC InsertarRaza @nombre_raza = 'Canario', @id_especie = 53;
+EXEC insertar_raza @nombre_raza = 'Labrador', @id_especie = 51;
+EXEC insertar_raza @nombre_raza = 'Persa', @id_especie = 52;
+EXEC insertar_raza @nombre_raza = 'Canario', @id_especie = 53;
 
---Chequeo de las inserciones
-SELECT * FROM Raza WHERE nombre_raza = 'Labrador'
-SELECT * FROM Raza WHERE nombre_raza = 'Persa'
-SELECT * FROM Raza WHERE nombre_raza = 'Canario'
-
+-- Chequeo de las inserciones
+SELECT * FROM raza WHERE nombre_raza = 'Labrador';
+SELECT * FROM raza WHERE nombre_raza = 'Persa';
+SELECT * FROM raza WHERE nombre_raza = 'Canario';
 -----------------------------------------------------------------------------------------------------------------------------
 -- Modificaciones
 
---revisamos que id tiene 'MaxSyle'
-SELECT * FROM Mascota 
-WHERE nombre_mascota = 'Maxsyle'
+-- Revisamos qué id tiene 'MaxSyle'
+SELECT * FROM mascota 
+WHERE nombre_mascota = 'Maxsyle';
 
---Ejecutamos el procedimiento almacenado para el update
-EXEC UpdateMascota @id_mascota = 364429, @nombre_mascota = 'MaxStyle', @fecha_nacimiento = '2020-01-10', @peso_mascota = 6.0, @condicion_mascota = 'Muy saludable', @id_dueno = 1, @id_raza = 1;
+-- Ejecutamos el procedimiento almacenado para el update
+EXEC update_mascota @id_mascota = 364429, @nombre_mascota = 'MaxStyle', @fecha_nacimiento = '2020-01-10', @peso_mascota = 6.0, @condicion_mascota = 'Muy saludable', @id_duenio = 1, @id_raza = 1;
 
---Chequeamos la modificacion
-SELECT * FROM Mascota 
-WHERE id_mascota = 364429
-
---.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--
-
---revisamos que id tiene la especie canino
-SELECT * FROM Especie WHERE nombre_especie = 'Canino'
-
---ejecutamos el update Especie
-EXEC UpdateEspecie @id = 51, @nombre = 'Reptil';
-
---chequeamos que el update se haya realizado sobre el id encontrado
-SELECT * FROM Especie WHERE id_especie = 51
+-- Chequeamos la modificación
+SELECT * FROM mascota 
+WHERE id_mascota = 364429;
 
 --.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--
 
---revisamos que id tiene la raza canario
-SELECT * FROM Raza WHERE nombre_raza = 'Labrador'
+-- Revisamos qué id tiene la especie canino
+SELECT * FROM especie WHERE nombre_especie = 'Canino';
 
---ejecutamos el update Raza
-EXEC UpdateRaza @id_raza = 53, @nombre_raza = 'Golden Retriever', @id_especie = 51;
+-- Ejecutamos el update especie
+EXEC update_especie @id = 51, @nombre = 'Reptil';
 
---chequeamos que el update se haya realizado sobre el id encontrado
-SELECT * FROM Raza WHERE id_raza = 53
+-- Chequeamos que el update se haya realizado sobre el id encontrado
+SELECT * FROM especie WHERE id_especie = 51;
 
+--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--.--
+
+-- Revisamos qué id tiene la raza canario
+SELECT * FROM raza WHERE nombre_raza = 'Labrador';
+
+-- Ejecutamos el update raza
+EXEC update_raza @id_raza = 53, @nombre_raza = 'Golden Retriever', @id_especie = 51;
+
+-- Chequeamos que el update se haya realizado sobre el id encontrado
+SELECT * FROM raza WHERE id_raza = 53;
 -----------------------------------------------------------------------------------------------------------------------------
 -- Eliminaciones
 
---Chequeamos que las id existan 
+-- Chequeamos que las id existan 
+SELECT * FROM mascota WHERE id_mascota = 364429;
+SELECT * FROM especie WHERE id_especie = 51;
+SELECT * FROM raza WHERE id_raza = 53;
 
-SELECT * FROM Mascota WHERE id_mascota = 364429 --id - mascota
-SELECT * FROM Especie WHERE id_especie = 51 --id - especie
-SELECT * FROM Raza WHERE id_raza = 53  --id - raza
+-- Ejecutamos los deletes correspondientes
+EXEC delete_mascota @id_mascota = 364429;
+EXEC delete_especie @id = 51;
+EXEC delete_raza @id_raza = 53;
 
---Ejecutamos los deletes correspondientes
-EXEC DeleteMascota @id_mascota = 364429;
-EXEC DeleteEspecie @id = 51;
-EXEC DeleteRaza @id_raza = 53;
-
---Chequeamos que se hayan eliminado correctamente 
-
-SELECT * FROM Mascota WHERE id_mascota = 364429 --id - mascota
-SELECT * FROM Especie WHERE id_especie = 51 --id - especie
-SELECT * FROM Raza WHERE id_raza = 53  --id - raza
+-- Chequeamos que se hayan eliminado correctamente 
+SELECT * FROM mascota WHERE id_mascota = 364429;
+SELECT * FROM especie WHERE id_especie = 51;
+SELECT * FROM raza WHERE id_raza = 53;
 
 GO
-

@@ -1,3 +1,4 @@
+USE gestion_citas_veterinaria;
 -- Duplicar los datos
 
 INSERT INTO especie (nombre_especie) SELECT nombre_especie FROM especie;
