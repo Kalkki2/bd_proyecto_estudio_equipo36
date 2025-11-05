@@ -50,3 +50,27 @@ __1º__ Inicia con BEGIN TRANSACTION (o la sintaxis equivalente del motor de BD)
 __2º__ Ejecuta varias operaciones SQL (por ejemplo: actualizar una tabla, insertar en otra, borrar en una tercera, etc.).  
 __3º__ COMMIT  si todo ha ido correctamente, confirmar los cambios: todas las operaciones pasan a estado “permanente”.  
 __4º__ ROLLBACK  si ha ocurrido un error (una restricción violada, falta de espacio, problema de red, etc.), entonces deshacer todos los cambios realizados por la transacción, dejando la base de datos como estaba al inicio de la transacción.
+
+
+## CASO PRACTICO *Registrar una nueva mascota y su dueño*
+
+Supongamos que llega un cliente nuevo con su mascota.Primero se intenta registrar al dueño en la tabla Dueno; si la inserción tiene éxito, se obtiene el ID generado (@id_dueno) con SCOPE_IDENTITY().
+Luego se inserta la mascota en la tabla Mascota, vinculándola con ese dueño mediante id_dueno.Todo esto ocurre dentro de una única transacción, lo que significa que ambas operaciones deben completarse correctamente para que se confirme (COMMIT TRANSACTION).
+Si ocurre un error en cualquiera de las dos inserciones —por ejemplo, si el dni, teléfono o email del dueño ya existen y violan una restricción UNIQUE, o si el id_raza no existe y genera un error de clave foránea el bloque CATCH se activa.
+En ese caso, se ejecuta un ROLLBACK TRANSACTION, que revierte todas las operaciones realizadas dentro de la transacción, eliminando también al dueño recién insertado. Esto garantiza que no queden registros huérfanos ni inconsistentes (por ejemplo, una mascota sin dueño asociado).
+
+*__Transaccion exitosa__*
+![image alt](img/tema03_transaccion_simple_caso_exitoso.png)
+
+![image alt](img/tema_03_transaccion_simple_exitosa_salida.png)
+*La  imagen muestra la correcta insercion del registro de una mascota y su respectivo dueño* 
+
+
+*__Transaccion fallida__*
+![image alt](img/tema03_transaccion_simple_caso_fallido.png)
+
+![image alt](img/tema_03_transaccion_simple_fallida_salida.png)
+*En este caso, la transacción falló porque el valor ingresado en el campo telefono_dueno viola una restricción UNIQUE definida en la tabla Dueno.Esto significa que el número de teléfono ya existe en otro registro y no puede repetirse.
+Al detectarse esta violación, SQL Server genera un error, el control pasa al bloque CATCH y se ejecuta el ROLLBACK, revirtiendo tanto la inserción del dueño como la de la mascota para mantener la integridad de los datos.*
+
+
