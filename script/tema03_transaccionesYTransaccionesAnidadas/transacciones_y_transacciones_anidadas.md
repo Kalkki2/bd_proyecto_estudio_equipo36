@@ -74,3 +74,39 @@ En ese caso, se ejecuta un ROLLBACK TRANSACTION, que revierte todas las operacio
 Al detectarse esta violación, SQL Server genera un error, el control pasa al bloque CATCH y se ejecuta el ROLLBACK, revirtiendo tanto la inserción del dueño como la de la mascota para mantener la integridad de los datos.*
 
 
+## Transacciones animadas 
+Una transacción anidada es una transacción que se inicia dentro del contexto de otra transacción ya activa.
+
+### Ventajas de las transacciones anidadas
+__1.__ *Modularización y Mantenimiento:* Permiten dividir un gran proceso transaccional en sub-transacciones, haciendo el diseño más manejable y mejorando la legibilidad y el mantenimiento del código.  
+__2.__ *Recuperación más Fina (Parcial):* En algunos modelos (aunque no es el comportamiento puro de SQL Server), si una sub-transacción falla, la transacción padre puede decidir revertir solo esa parte sin abortar todo el proceso principal.  
+__3.__ *Reutilización y Encapsulamiento:* Los componentes que ejecutan sub-transacciones pueden diseñarse, probarse y reutilizarse más fácilmente, ya que están encapsulados dentro de su propia lógica transaccional hija.  
+__4.__ *Mejor modelado de procesos largos o compuestos:* En escenarios complejos (por ejemplo workflows de negocio extensos, procesos distribuidos), las transacciones anidadas permiten estructurar mejor la lógica sin violar el principio de que la operación global sea atómica.   
+
+
+### Desventajas de las transacciones anidadas
+__1.__ *Complejidad Operacional:* Introducen complejidad en el diseño y seguimiento, pues se debe manejar correctamente la jerarquía padre/hija, los commit y rollback.   
+__2.__ *Soporte Limitado y Riesgo de Falsas Expectativas:* No todos los SGBD las implementan de forma completa. Esto puede llevar al desarrollador a tener falsas expectativas sobre el comportamiento de COMMIT y ROLLBACK de las sub-transacciones.  
+__3.__ *Impacto en el Rendimiento:* La gestión de múltiples niveles de transacción implica una sobrecarga adicional (más locks, más control de estado y mayor uso de logs).  
+__4.__ *Difícil depuración y testing:* Las transacciones anidadas pueden hacer que el flujo de control sea más difícil de seguir y verificar: por ejemplo, ¿qué sucede cuando falla una sub-transacción?, ¿se revierte sólo ella?, ¿cómo se comunica al padre?, etc.
+Además, en entornos de prueba puede ser más difícil replicar el comportamiento real del sistema en producción.
+
+ ### ¿Cómo funciona en SQL Server?
+Cada vez que haces BEGIN TRANSACTION incrementa un contador @@TRANCOUNT. 
+Cuando haces COMMIT TRANSACTION, este decrementa @@TRANCOUNT. Solo cuando @@TRANCOUNT llega a 0 se considera que la transacción realmente se confirma. 
+Si haces ROLLBACK TRANSACTION en cualquier nivel (externo o interno) se revierte todo: la transacción exterior e interior. 
+En SQL Server se dice que existe “apariencia” de transacciones anidadas, pero en esencia es un bloque único con contador de niveles
+
+## CASO PRACTICO 2 *Registrar una  cita + tratamiento + medicamento*
+*__Transaccion anidada exitosa__*
+![image alt](img/tema03_transaccion_anidada_caso_exitoso_p1.png)
+![image alt](img/tema03_transaccion_anidada_caso_p2.png)
+![image alt](img/tema_03_transaccion_anidada_exitosa_salida.png)
+
+
+*__Transaccion anidada fallida__*
+![image alt](img/tema03_transaccion_anidada_caso_fallido_p1.png)
+![image alt](img/tema03_transaccion_anidada_caso_p2.png)
+![image alt](img/tema_03_transaccion_anidada_fallida_salida.png)
+*La transacción falla porque, aunque la cita médica y el tratamiento se insertan correctamente, al intentar registrar el medicamento en la tabla Tratamiento_Medicamento se usa un id_medicamento que no existe en la tabla Medicamento.
+Esto viola la restricción de clave foránea, genera un error en la transacción interna y provoca que toda la transacción tanto la interna como la principal sea revertida completamente para mantener la integridad de los datos.*
