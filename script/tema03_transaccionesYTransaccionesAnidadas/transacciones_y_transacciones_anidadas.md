@@ -1,4 +1,4 @@
-# TEMA 3 : Transacciones y Transacciones Anidadas
+# TEMA 3 : Manejo de Transacciones y Transacciones Anidadas
 
 Una transacción es una unidad lógica de trabajo en la que se agrupan una o varias operaciones de base de datos (como INSERT, UPDATE, DELETE, incluso SELECT en ciertos casos) que deben ejecutarse como un todo. En SQL Server, cualquier modificación de datos puede estar contenida dentro de una transacción explícita o implícita.El objetivo de agruparlas es asegurar que o bien todas las operaciones se efectúan satisfactoriamente, o bien ninguna se aplique  evitando que queden datos en un estado intermedio inconsistente.
 
@@ -52,7 +52,7 @@ __3º__ COMMIT  si todo ha ido correctamente, confirmar los cambios: todas las o
 __4º__ ROLLBACK  si ha ocurrido un error (una restricción violada, falta de espacio, problema de red, etc.), entonces deshacer todos los cambios realizados por la transacción, dejando la base de datos como estaba al inicio de la transacción.
 
 
-## CASO PRACTICO *Registrar una nueva mascota y su dueño*
+### CASO PRACTICO *Registrar una nueva mascota y su dueño*
 
 Supongamos que llega un cliente nuevo con su mascota.Primero se intenta registrar al dueño en la tabla Dueno; si la inserción tiene éxito, se obtiene el ID generado (@id_dueno) con SCOPE_IDENTITY().
 Luego se inserta la mascota en la tabla Mascota, vinculándola con ese dueño mediante id_dueno.Todo esto ocurre dentro de una única transacción, lo que significa que ambas operaciones deben completarse correctamente para que se confirme (COMMIT TRANSACTION).
@@ -97,7 +97,7 @@ Cuando haces COMMIT TRANSACTION, este decrementa @@TRANCOUNT. Solo cuando @@TRAN
 Si haces ROLLBACK TRANSACTION en cualquier nivel (externo o interno) se revierte todo: la transacción exterior e interior. 
 En SQL Server se dice que existe “apariencia” de transacciones anidadas, pero en esencia es un bloque único con contador de niveles
 
-## CASO PRACTICO 2 *Registrar una  cita + tratamiento + medicamento*
+### CASO PRACTICO 2 *Registrar una  cita + tratamiento + medicamento*
 *__Transaccion anidada exitosa__*
 ![image alt](img/tema03_transaccion_anidada_caso_exitoso_p1.png)
 ![image alt](img/tema03_transaccion_anidada_caso_p2.png)
@@ -110,3 +110,6 @@ En SQL Server se dice que existe “apariencia” de transacciones anidadas, per
 ![image alt](img/tema_03_transaccion_anidada_fallida_salida.png)
 *La transacción falla porque, aunque la cita médica y el tratamiento se insertan correctamente, al intentar registrar el medicamento en la tabla Tratamiento_Medicamento se usa un id_medicamento que no existe en la tabla Medicamento.
 Esto viola la restricción de clave foránea, genera un error en la transacción interna y provoca que toda la transacción tanto la interna como la principal sea revertida completamente para mantener la integridad de los datos.*
+
+## Conclusión
+En conclusión, el uso de transacciones y transacciones anidadas es fundamental para asegurar la coherencia y confiabilidad de los datos en sistemas donde múltiples operaciones deben ejecutarse de forma coordinada. Las transacciones simples permiten que un bloque de operaciones funcione como una unidad indivisible: si todo sale bien se confirma, y si ocurre un error se revierte por completo, evitando información parcial o corrupta. Las transacciones anidadas amplían este concepto permitiendo dividir un proceso grande en subprocesos independientes, facilitando la claridad lógica, el control por etapas y la detección de errores dentro de cada parte del flujo. No obstante, su uso requiere conocimiento del comportamiento real del motor de base de datos: en SQL Server, los commits internos no confirman nada definitivamente y los rollbacks internos pueden revertir toda la transacción externa, lo que significa que deben implementarse con cuidado, con manejo estructurado de errores y una planificación clara. Bien utilizadas, las transacciones y las transacciones anidadas aportan robustez, orden y confiabilidad al manejo de datos en aplicaciones complejas.
