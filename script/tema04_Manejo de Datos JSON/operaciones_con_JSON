@@ -1,0 +1,174 @@
+-- =========================
+-- Manejo JSON - crear tabla, insertar JSON desde tablas relacionales, CRUD y optimizacion
+-- =========================
+
+/*
+  Tabla mascota_json:
+  - Info_Mascota NVARCHAR(MAX) con JSON valido
+  - almacenar datos centrales de mascota + duenio + raza/especie + ultimo veterinario (si existe)
+*/
+
+IF OBJECT_ID('mascota_json', 'U') IS NOT NULL
+    DROP TABLE mascota_json;
+GO
+
+CREATE TABLE mascota_json (
+    id_mascota INT NOT NULL PRIMARY KEY,
+    info_mascota NVARCHAR(MAX) NULL,
+    fecha_registro DATE NOT NULL DEFAULT GETDATE()
+);
+GO
+
+-- Constraint para asegurar JSON valido
+ALTER TABLE mascota_json
+ADD CONSTRAINT ck_mascota_json_isjson CHECK (ISJSON(info_mascota) > 0);
+GO
+
+-- Insertar JSON generado a partir de las tablas relacionales
+-- Para obtener el ultimo veterinario que atendio la mascota usamos una subconsulta (TOP 1)
+INSERT INTO mascota_json (id_mascota, info_mascota)
+SELECT
+    m.id_mascota,
+    JSON_QUERY(
+        CONCAT(
+            '{',
+              '"Nombre":"', m.nombre, '", ',
+              '"FechaNacimiento":"', CONVERT(varchar(10), m.fecha_nacimiento, 23), '", ',
+              '"Peso":', REPLACE(CONVERT(varchar(32), m.peso), ',', '.'), ', ',
+              '"Condicion":"', m.condicion, '", ',
+              '"Duenio":"', d.nombre, ' ', d.apellido, '", ',
+              '"Duenio_DNI":"', d.dni, '", ',
+              '"Especie":"', es.nombre, '", ',
+              '"Raza":"', r.nombre, '", ',
+              '"Ultimo_Veterinario":"', ISNULL(
+                    (SELECT TOP 1 v.nombre + '' '' + v.apellido
+                     FROM cita_medica cm
+                     JOIN veterinario v ON cm.id_veterinario = v.id_veterinario
+                     WHERE cm.id_mascota = m.id_mascota
+                     ORDER BY cm.fecha_cita DESC), ''
+                  ), '", ',
+              '"Estado":"Activo"',
+            '}'
+        )
+    )
+FROM mascota m
+JOIN duenio d ON m.id_duenio = d.id_duenio
+JOIN raza r ON m.id_raza = r.id_raza AND m.id_especie = r.id_especie
+JOIN especie es ON m.id_especie = es.id_especie;
+GO
+
+-- Verificacion rapida
+SELECT * FROM mascota_json;
+GO
+
+-- =========================
+-- Operaciones CRUD sobre JSON
+-- =========================
+
+-- 1) Leer: extraer nombre y duenio desde JSON
+SELECT
+  id_mascota,
+  JSON_VALUE(info_mascota, '$.Nombre') AS Nombre,
+  JSON_VALUE(info_mascota, '$.Duenio') AS Duenio,
+  JSON_VALUE(info_mascota, '$.Raza') AS Raza
+FROM mascota_json;
+GO
+
+-- 2) Actualizar: modificar Estado a 'En tratamiento' para mascotas mayores a 5 años (edad calculada con fecha_nacimiento dentro del JSON o con la tabla mascota)
+-- Usamos la tabla mascota para la condicion (mas simple)
+UPDATE mascota_json
+SET info_mascota = JSON_MODIFY(info_mascota, '$.Estado', 'En tratamiento')
+FROM mascota_json mj
+JOIN mascota m ON mj.id_mascota = m.id_mascota
+WHERE DATEDIFF(YEAR, m.fecha_nacimiento, GETDATE()) > 5;
+GO
+
+-- 3) Agregar propiedad: Ultima_Consulta con fecha
+UPDATE mascota_json
+SET info_mascota = JSON_MODIFY(info_mascota, '$.Ultima_Consulta', CONVERT(varchar(10), GETDATE(), 23));
+GO
+
+-- 4) Eliminar propiedad: eliminar Peso para id_mascota = 2 (estableciendo NULL)
+UPDATE mascota_json
+SET info_mascota = JSON_MODIFY(info_mascota, '$.Peso', NULL)
+WHERE id_mascota = 2;
+GO
+
+-- 5) Usar OPENJSON para descomponer un registro en columnas
+SELECT *
+FROM OPENJSON((SELECT info_mascota FROM mascota_json WHERE id_mascota = 1))
+WITH (
+    Nombre NVARCHAR(100) '$.Nombre',
+    FechaNacimiento DATE '$.FechaNacimiento',
+    Peso FLOAT '$.Peso' AS JSON,
+    Condicion NVARCHAR(100) '$.Condicion',
+    Duenio NVARCHAR(200) '$.Duenio',
+    Ultimo_Veterinario NVARCHAR(200) '$.Ultimo_Veterinario'
+);
+GO
+
+-- =========================
+-- Consultas de ejemplo que usan JSON_VALUE / JSON_QUERY
+-- =========================
+
+-- Mascotas 'En tratamiento'
+SELECT id_mascota, JSON_VALUE(info_mascota, '$.Nombre') AS Nombre,
+       JSON_VALUE(info_mascota, '$.Estado') AS Estado
+FROM mascota_json
+WHERE JSON_VALUE(info_mascota, '$.Estado') = 'En tratamiento';
+GO
+
+-- Mascotas atendidas por veterinario 'Gomez' (busqueda por cadena)
+SELECT id_mascota, JSON_VALUE(info_mascota, '$.Nombre') AS Nombre,
+       JSON_VALUE(info_mascota, '$.Ultimo_Veterinario') AS UltimoVet
+FROM mascota_json
+WHERE JSON_VALUE(info_mascota, '$.Ultimo_Veterinario') LIKE '%Gomez%';
+GO
+
+-- Mascotas cuya especie sea 'Perro' y estan activas
+SELECT id_mascota, JSON_VALUE(info_mascota, '$.Nombre') AS Nombre
+FROM mascota_json
+WHERE JSON_VALUE(info_mascota, '$.Especie') = 'Perro'
+  AND JSON_VALUE(info_mascota, '$.Estado') = 'Activo';
+GO
+
+-- =========================
+--  Optimizacion: columnas calculadas, persistidas e indices
+-- =========================
+
+-- Agregar columnas calculadas basadas en JSON (persistidas cuando posible)
+-- Nota: para persistir, la expresion debe ser determinista. JSON_VALUE es determinista si la columna es NVARCHAR constante.
+ALTER TABLE mascota_json
+ADD
+    Nombre AS JSON_VALUE(info_mascota, '$.Nombre') PERSISTED,
+    Especie AS JSON_VALUE(info_mascota, '$.Especie') PERSISTED,
+    Estado AS JSON_VALUE(info_mascota, '$.Estado') PERSISTED,
+    Edad AS TRY_CAST(LEFT(JSON_VALUE(info_mascota, '$.FechaNacimiento'), 4) AS INT); -- aproximacion simple (anio) -- alternativa: calcular desde tabla mascota
+GO
+
+-- Crear indice para busquedas frecuentes por Estado y Especie
+IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IDX_MascotaJSON_Estado_Especie' AND object_id = OBJECT_ID('mascota_json'))
+BEGIN
+    CREATE INDEX IDX_MascotaJSON_Estado_Especie ON mascota_json(Estado, Especie) INCLUDE (Nombre, Edad);
+END
+GO
+
+-- Consulta optimizada que ahora puede usar index seek
+SELECT Nombre, Especie, Edad
+FROM mascota_json
+WHERE Estado = 'En tratamiento' AND Especie = 'Perro';
+GO
+
+-- Mostrar plan de ejecucion (ejecutar en SSMS con Actual Execution Plan ON)
+SELECT Nombre, Especie, Edad
+FROM mascota_json
+WHERE Estado = 'Activo' AND Especie = 'Perro';
+GO
+
+-- =========================
+-- Limpieza / Opcional: eliminar tabla JSON o indices si hace falta
+-- =========================
+-- DROP INDEX IDX_MascotaJSON_Estado_Especie ON mascota_json;
+-- DROP TABLE mascota_json;
+
+
