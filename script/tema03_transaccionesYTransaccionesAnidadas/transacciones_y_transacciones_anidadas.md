@@ -100,13 +100,13 @@ En SQL Server se dice que existe “apariencia” de transacciones anidadas, per
 ### CASO PRACTICO 2 *Registrar una  cita + tratamiento + medicamento*
 *__Transaccion anidada exitosa__*
 ![image alt](img/tema03_transaccion_anidada_caso_exitoso_p1.png)
-![image alt](img/tema03_transaccion_anidada_caso_p2.png)
+![image alt](img/tema03_transaccion_anidada_caso_exitoso_p2.png)
 ![image alt](img/tema_03_transaccion_anidada_exitosa_salida.png)
 
 
 *__Transaccion anidada fallida__*
 ![image alt](img/tema03_transaccion_anidada_caso_fallido_p1.png)
-![image alt](img/tema03_transaccion_anidada_caso_p2.png)
+![image alt](img/tema03_transaccion_anidada_caso_fallido_p2.png)
 ![image alt](img/tema_03_transaccion_anidada_fallida_salida.png)
 *La transacción falla porque, aunque la cita médica y el tratamiento se insertan correctamente, al intentar registrar el medicamento en la tabla Tratamiento_Medicamento se usa un id_medicamento que no existe en la tabla Medicamento.
 Esto viola la restricción de clave foránea, genera un error en la transacción interna y provoca que toda la transacción tanto la interna como la principal sea revertida completamente para mantener la integridad de los datos.*
