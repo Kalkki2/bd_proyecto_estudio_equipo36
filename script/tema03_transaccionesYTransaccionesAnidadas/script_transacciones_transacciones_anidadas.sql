@@ -1,39 +1,37 @@
-USE gestion_citas_veterinaria;
+USE gestion_citas_veterinaria
 GO
 
 --******************************************
---                TRANSACCION 
+--         TRANSACCION SIMPLE
 --******************************************
 
 --Transaccion exitosa
 
-DECLARE @id_duenio INT; -- Se declara una variable que guarda el ID del dueño recién insertado.
+DECLARE @id_duenio INT; -- Se declara una variable que guarda el ID del dueÃ±o reciÃ©n insertado.
 
 BEGIN TRANSACTION;  --Inicio de la transaccion
 BEGIN TRY
-    -- Insertar Dueño
+    -- Insertar DueÃ±o
     INSERT INTO duenio (nombre_duenio, apellido_duenio, dni_duenio, telefono_duenio, email_duenio, direccion_duenio)
-    VALUES ('Ana', 'López', '59321213', 3794935410, 'ana6699L@gmail.com', 'San Martín 123');
+    VALUES ('Ana', 'LÃ³pez', '59321213', 3794935410, 'ana6699L@gmail.com', 'San MartÃ­n 123');
 
-    SET @id_duenio = SCOPE_IDENTITY(); -- Se asigna el ID del Dueño recién insertado
+    SET @id_duenio = SCOPE_IDENTITY(); -- Se asigna el ID del DueÃ±o reciÃ©n insertado
 
     -- Insertar Mascota
     INSERT INTO mascota (nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_duenio, id_raza)
     VALUES ('Toby', '2020-06-15', 5.8, 'Sano', @id_duenio, 2);
 
-    -- Si ambas inserciones se ejecutan sin errores, la transacción se confirma.
+    -- Si ambas inserciones se ejecutan sin errores, la transacciÃ³n se confirma.
     COMMIT TRANSACTION;
     PRINT '-----------------------------------------------------';
-    PRINT 'Dueño y mascota registrados correctamente!';
+    PRINT 'DueÃ±o y mascota registrados correctamente!';
 END TRY
 BEGIN CATCH
-    -- El ROLLBACK es correcto y necesario
-    IF @@TRANCOUNT > 0
-        ROLLBACK TRANSACTION;
-
+    -- El ROLLBACK revierte toda la transaccion
+    ROLLBACK TRANSACTION;
     PRINT '-----------------------------------------------------';
-    PRINT 'Error al registrar el dueño o la mascota.';
-    -- Si falló antes de asignar el dueño, mostrará “NULL/No asignado”.
+    PRINT 'Error al registrar el dueÃ±o o la mascota.';
+    -- Si fallÃ³ antes de asignar el dueÃ±o, mostrarÃ¡ â€œNULL/No asignadoâ€.
     PRINT 'El valor de @id_dueno antes del error era: ' + ISNULL(CAST(@id_duenio AS VARCHAR(50)), 'NULL/No asignado');
     PRINT 'Mensaje de Error: ' + ERROR_MESSAGE();  -- Muestra el mensaje de error SQL
 
@@ -43,33 +41,31 @@ GO
 
 --Transaccion fallida
 
-DECLARE @id_duenio INT; -- Se declara una variable que guarda el ID del dueño recién insertado.
+DECLARE @id_duenio INT; -- Se declara una variable que guarda el ID del dueÃ±o reciÃ©n insertado.
 
 BEGIN TRANSACTION;  --Inicio de la transaccion
 BEGIN TRY
-    -- Insertar Dueño
+    -- Insertar DueÃ±o
     INSERT INTO duenio (nombre_duenio, apellido_duenio, dni_duenio, telefono_duenio, email_duenio, direccion_duenio)
-    VALUES ('Juan', 'Perez', '43948978', 3794935410, 'juannPerez@gmail.com', 'San Martín 123');
+    VALUES ('Juan', 'Perez', '43948978', 3794935410, 'juannPerez@gmail.com', 'San MartÃ­n 123');
 
-    SET @id_duenio = SCOPE_IDENTITY(); -- Se asigna el ID del Dueño recién insertado
+    SET @id_duenio = SCOPE_IDENTITY(); -- Se asigna el ID del DueÃ±o reciÃ©n insertado
 
     -- Insertar Mascota
     INSERT INTO mascota (nombre_mascota, fecha_nacimiento, peso_mascota, condicion_mascota, id_duenio, id_raza)
     VALUES ('Yacki', '2020-02-5', 6.8, 'Sano', @id_duenio, 2);
 
-    -- Si ambas inserciones se ejecutan sin errores, la transacción se confirma.
+    -- Si ambas inserciones se ejecutan sin errores, la transacciÃ³n se confirma.
     COMMIT TRANSACTION;
     PRINT '-----------------------------------------------------';
-    PRINT 'Dueño y mascota registrados correctamente!';
+    PRINT 'DueÃ±o y mascota registrados correctamente!';
 END TRY
 BEGIN CATCH
-    -- El ROLLBACK es correcto y necesario
-    IF @@TRANCOUNT > 0
-        ROLLBACK TRANSACTION;
-
+    -- El ROLLBACK revierte toda la transaccion
+    ROLLBACK TRANSACTION;
     PRINT '-----------------------------------------------------';
-    PRINT 'Error al registrar el dueño o la mascota.';
-    -- Si falló antes de asignar el dueño, mostrará “NULL/No asignado”.
+    PRINT 'Error al registrar el dueÃ±o o la mascota.';
+    -- Si fallÃ³ antes de asignar el dueÃ±o, mostrarÃ¡ â€œNULL/No asignadoâ€.
     PRINT 'El valor de @id_dueno antes del error era: ' + ISNULL(CAST(@id_duenio AS VARCHAR(50)), 'NULL/No asignado');
     PRINT 'Mensaje de Error: ' + ERROR_MESSAGE();  -- Muestra el mensaje de error SQL
 
@@ -82,32 +78,30 @@ GO
 
 
 --******************************************
---         TRANSACCION ANIDADA
+--       TRANSACCIONES ANIDADAS
 --******************************************
 
 --Transaccion anidada exitosa
 
-DECLARE @id_cita INT;        -- Variable para guardar el ID generado de la cita médica
+DECLARE @id_cita INT;        -- Variable para guardar el ID generado de la cita mÃ©dica
 DECLARE @id_tratamiento INT; -- Variable para guardar el ID generado del tratamiento
 
--- NIVEL 1: Transacción Principal (Registro de la Cita)
-BEGIN TRANSACTION CitaPrincipal;  -- Inicia la transacción principal. Todo lo que ocurra adentro depende de ella.
-
+-- NIVEL 1: TransacciÃ³n Principal (Registro de la Cita)
+BEGIN TRANSACTION CitaPrincipal;  -- Inicia la transacciÃ³n principal. Todo lo que ocurra adentro depende de ella.
 BEGIN TRY   -- Inicia un bloque de control de errores TRY/CATCH
-    --  Registrar una cita médica
+    --  Registrar una cita mÃ©dica
     INSERT INTO citas_medica (fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario)
-    VALUES ('2025-11-03', ' dolor de cabeza', 'admin', 'Dolor persistente', 7, 1);
+    VALUES (GETDATE(), ' dolor de cabeza', SYSTEM_USER, 'Dolor persistente', 7, 1);
 
-    SET @id_cita = SCOPE_IDENTITY();     -- Guarda el ID recién generado de la cita
-    PRINT 'Cita médica registrada correctamente.';
+    SET @id_cita = SCOPE_IDENTITY();     -- Guarda el ID reciÃ©n generado de la cita
+    PRINT 'Cita mÃ©dica registrada correctamente.';
 
-    -- NIVEL 2: Transacción anidada (Registro de Tratamiento y Medicamento)
-    BEGIN TRANSACTION TratamientoAnidado;  -- Abre una nueva transacción dentro de la principal (incrementa @@TRANCOUNT)
-
+    -- NIVEL 2: TransacciÃ³n anidada (Registro de Tratamiento y Medicamento)
+    BEGIN TRANSACTION TratamientoAnidado;  -- Abre una nueva transacciÃ³n dentro de la principal (incrementa @@TRANCOUNT)
     BEGIN TRY
         --   Registrar el tratamiento vinculado a la cita
         INSERT INTO tratamiento (nombre_tratamiento, inicio_tratamiento, fin_tratamiento, id_citaMedica)
-        VALUES ('Tratamiento con analgésicos', '2025-11-03', '2025-12-03', @id_cita);
+        VALUES ('Tratamiento con analgÃ©sicos', '2025-11-03', '2025-12-03', @id_cita);
 
         SET @id_tratamiento = SCOPE_IDENTITY(); --Guarda el ID generado del tratamiento
         PRINT ' Tratamiento registrado correctamente.';
@@ -117,67 +111,61 @@ BEGIN TRY   -- Inicia un bloque de control de errores TRY/CATCH
         VALUES (1, @id_tratamiento);
         
         PRINT ' Medicamento vinculado correctamente.';
-         PRINT '---------------------------------------------';
+        PRINT '---------------------------------------------';
 
-        -- Si todo salió bien dentro del bloque anidado:
-        COMMIT TRANSACTION TratamientoAnidado;  -- Cierra la transacción interna
-        PRINT 'Transacción interna confirmada.';
+        -- Si todo saliÃ³ bien dentro del bloque anidado:
+        COMMIT TRANSACTION TratamientoAnidado;  -- Cierra la transacciÃ³n interna
+        PRINT 'TransacciÃ³n interna confirmada.';
     END TRY
     BEGIN CATCH
-        -- Si ocurre un error dentro de la transacción anidada:
-        PRINT ' Error en la transacción interna (Tratamiento o Medicamento).';
+        -- Si ocurre un error dentro de la transacciÃ³n anidada:
+        PRINT ' Error en la transacciÃ³n interna (Tratamiento o Medicamento).';
         PRINT ERROR_MESSAGE();  -- Muestra el mensaje de error SQL
         ROLLBACK TRANSACTION;   -- Este ROLLBACK deshace TODO (no solo el bloque anidado), porque SQL Server no permite revertir parcialmente sin SAVEPOINT.
     END CATCH;
 
-    -- Si todo salió bien hasta acá, se confirma la transacción principal
-
-    IF @@TRANCOUNT > 0   -- Verifica si aún queda una transacción abierta
+     -- Si todo saliÃ³ bien hasta acÃ¡, se confirma la transacciÃ³n principal
+    IF @@TRANCOUNT > 0        -- Verifica si aÃºn queda una transacciÃ³n abierta
     BEGIN
-        COMMIT TRANSACTION CitaPrincipal;  -- Confirma todo (Cita + Tratamiento + Medicamento)
-        PRINT 'Transacción principal confirmada (Cita + Tratamiento + Medicamento).';
+        COMMIT TRANSACTION CitaPrincipal;   -- Confirma todo (Cita + Tratamiento + Medicamento)
+        PRINT 'TransacciÃ³n principal confirmada (Cita + Tratamiento + Medicamento).';
     END
     ELSE
-    BEGIN
-        -- Si hubo error en la interna, @@TRANCOUNT ya es 0
-        PRINT 'La transacción principal no se confirmó porque hubo un error interno.';
+    BEGIN -- Si hubo error en la interna, @@TRANCOUNT ya es 0
+        PRINT 'La transacciÃ³n principal no se confirmÃ³ porque hubo un error interno.';
     END
 END TRY
 BEGIN CATCH
     -- Si ocurre un error fuera del bloque interno (en la cita)
-    PRINT 'Error en la transacción principal.';
+    PRINT 'Error en la transacciÃ³n principal.';
     PRINT ERROR_MESSAGE();    -- Muestra el error SQL exacto
-
-    IF @@TRANCOUNT > 0     -- Si aún hay una transacción activa
-        ROLLBACK TRANSACTION;   -- Revierte todo lo hecho
-    PRINT ' Se revirtió toda la transacción.';
+    ROLLBACK TRANSACTION;   -- Revierte todo lo hecho
+    PRINT ' Se revirtiÃ³ toda la transacciÃ³n.';
 END CATCH;
 GO
 
 
 --Transaccion anidada fallida
 
-DECLARE @id_cita INT;        -- Variable para guardar el ID generado de la cita médica
+DECLARE @id_cita INT;        -- Variable para guardar el ID generado de la cita mÃ©dica
 DECLARE @id_tratamiento INT; -- Variable para guardar el ID generado del tratamiento
 
--- NIVEL 1: Transacción Principal (Registro de la Cita)
-BEGIN TRANSACTION CitaPrincipal;  -- Inicia la transacción principal. Todo lo que ocurra adentro depende de ella.
-
+-- NIVEL 1: TransacciÃ³n Principal (Registro de la Cita)
+BEGIN TRANSACTION CitaPrincipal;  -- Inicia la transacciÃ³n principal. Todo lo que ocurra adentro depende de ella.
 BEGIN TRY   -- Inicia un bloque de control de errores TRY/CATCH
-    --  Registrar una cita médica
+    --  Registrar una cita mÃ©dica
     INSERT INTO citas_medica (fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario)
     VALUES ('2025-11-03', ' dolor de cabeza', 'admin', 'Dolor persistente', 7, 1);
 
-    SET @id_cita = SCOPE_IDENTITY();     -- Guarda el ID recién generado de la cita
-    PRINT 'Cita médica registrada correctamente.';
+    SET @id_cita = SCOPE_IDENTITY();     -- Guarda el ID reciÃ©n generado de la cita
+    PRINT 'Cita mÃ©dica registrada correctamente.';
 
-    -- NIVEL 2: Transacción anidada (Registro de Tratamiento y Medicamento)
-    BEGIN TRANSACTION TratamientoAnidado;  -- Abre una nueva transacción dentro de la principal (incrementa @@TRANCOUNT)
-
+    -- NIVEL 2: TransacciÃ³n anidada (Registro de Tratamiento y Medicamento)
+    BEGIN TRANSACTION TratamientoAnidado;  -- Abre una nueva transacciÃ³n dentro de la principal (incrementa @@TRANCOUNT)
     BEGIN TRY
         --   Registrar el tratamiento vinculado a la cita
         INSERT INTO tratamiento (nombre_tratamiento, inicio_tratamiento, fin_tratamiento, id_citaMedica)
-        VALUES ('Tratamiento con analgésicos', '2025-11-03', '2025-12-03', @id_cita);
+        VALUES ('Tratamiento con analgÃ©sicos', '2025-11-03', '2025-12-03', @id_cita);
 
         SET @id_tratamiento = SCOPE_IDENTITY(); --Guarda el ID generado del tratamiento
         PRINT ' Tratamiento registrado correctamente.';
@@ -189,37 +177,33 @@ BEGIN TRY   -- Inicia un bloque de control de errores TRY/CATCH
         PRINT ' Medicamento vinculado correctamente.';
          PRINT '---------------------------------------------';
 
-        -- Si todo salió bien dentro del bloque anidado:
-        COMMIT TRANSACTION TratamientoAnidado;  -- Cierra la transacción interna
-        PRINT 'Transacción interna confirmada.';
+        -- Si todo saliÃ³ bien dentro del bloque anidado:
+        COMMIT TRANSACTION TratamientoAnidado;  -- Cierra la transacciÃ³n interna
+        PRINT 'TransacciÃ³n interna confirmada.';
     END TRY
     BEGIN CATCH
-        -- Si ocurre un error dentro de la transacción anidada:
-        PRINT ' Error en la transacción interna (Tratamiento o Medicamento).';
+        -- Si ocurre un error dentro de la transacciÃ³n anidada:
+        PRINT ' Error en la transacciÃ³n interna (Tratamiento o Medicamento).';
         PRINT ERROR_MESSAGE();  -- Muestra el mensaje de error SQL
         ROLLBACK TRANSACTION;   -- Este ROLLBACK deshace TODO (no solo el bloque anidado), porque SQL Server no permite revertir parcialmente sin SAVEPOINT.
     END CATCH;
 
-    -- Si todo salió bien hasta acá, se confirma la transacción principal
-
-    IF @@TRANCOUNT > 0   -- Verifica si aún queda una transacción abierta
+    -- Si todo saliÃ³ bien hasta acÃ¡, se confirma la transacciÃ³n principal
+    IF @@TRANCOUNT > 0   -- Verifica si aÃºn queda una transacciÃ³n abierta
     BEGIN
         COMMIT TRANSACTION CitaPrincipal;  -- Confirma todo (Cita + Tratamiento + Medicamento)
-        PRINT 'Transacción principal confirmada (Cita + Tratamiento + Medicamento).';
+        PRINT 'TransacciÃ³n principal confirmada (Cita + Tratamiento + Medicamento).';
     END
     ELSE
-    BEGIN
-        -- Si hubo error en la interna, @@TRANCOUNT ya es 0
-        PRINT 'La transacción principal no se confirmó porque hubo un error interno.';
+    BEGIN-- Si hubo error en la interna, @@TRANCOUNT ya es 0
+        PRINT 'La transacciÃ³n principal no se confirmÃ³ porque hubo un error interno.';
     END
 END TRY
 BEGIN CATCH
     -- Si ocurre un error fuera del bloque interno (en la cita)
-    PRINT 'Error en la transacción principal.';
+    PRINT 'Error en la transacciÃ³n principal.';
     PRINT ERROR_MESSAGE();    -- Muestra el error SQL exacto
-
-    IF @@TRANCOUNT > 0     -- Si aún hay una transacción activa
-        ROLLBACK TRANSACTION;   -- Revierte todo lo hecho
-    PRINT ' Se revirtió toda la transacción.';
+    ROLLBACK TRANSACTION;   -- Revierte todo lo hecho
+    PRINT 'Se revirtiÃ³ toda la transacciÃ³n.';
 END CATCH;
 GO
