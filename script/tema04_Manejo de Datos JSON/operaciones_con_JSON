@@ -1,174 +1,86 @@
--- =========================
--- Manejo JSON - crear tabla, insertar JSON desde tablas relacionales, CRUD y optimizacion
--- =========================
+# TEMA 4: Manejo de datos JSON
+## Introducción
+El manejo de datos en formato **JSON (JavaScript Object Notation)** ha cobrado gran relevancia en los sistemas actuales debido a su flexibilidad, legibilidad y facilidad para intercambiar información entre aplicaciones.
+En SQL Server, aunque no existe un tipo de dato nativo JSON, se permite trabajar con él utilizando el tipo NVARCHAR(MAX), junto con un conjunto de **funciones JSON integradas** que facilitan su almacenamiento, consulta y modificación  (por ejemplo, JSON_VALUE, JSON_QUERY, OPENJSON, ISJSON). 
+El uso de JSON es especialmente útil en escenarios donde los datos presentan estructuras variables, o cuando es necesario integrar información desde servicios web, APIs o sistemas externos.
 
-/*
-  Tabla mascota_json:
-  - Info_Mascota NVARCHAR(MAX) con JSON valido
-  - almacenar datos centrales de mascota + duenio + raza/especie + ultimo veterinario (si existe)
-*/
+## Ventajas
+Algunas de las ventajas de usar JSON en SQL Server son:  
+__Flexibilidad de esquema:__ Permite almacenar datos cuya estructura puede variar entre registros sin tener que modificar el esquema de la tabla cada vez.   
+__Integración con datos relacionales:__ Podés combinar lo mejor de los dos mundos —una estructura relacional clara para lo principal, y un campo JSON para los datos variables o poco predecibles.   
+__Facilidad de intercambio de datos:__ Muchas aplicaciones web/servicios usan JSON; almacenar datos en JSON facilita esa integración.   
+__Menor necesidad de tablas adicionales para atributos variables:__ En vez de crear tablas nuevas para cada atributo que puede o no existir, podés agruparlos en un JSON.   
+__Extracción directa de valores dentro del JSON:__ Gracias a funciones como JSON_VALUE() o JSON_QUERY() se pueden consultar partes específicas del documento.
 
-IF OBJECT_ID('mascota_json', 'U') IS NOT NULL
-    DROP TABLE mascota_json;
-GO
+## Desventajas
+También es importante conocer los contras para evaluar si conviene usarlo:  
+__Rendimiento menor en algunos casos:__ Consultas que extraen muchos valores de documentos JSON grandes o anidados pueden ser más lentas que sobre columnas relacionales.   
+__Menor control de integridad de datos:__ Al usar JSON, se pierde parte de la validación automática del esquema (columnas, tipos, claves foráneas) propia del modelo relacional.   
+__Indexación más limitada:__ No se puede indexar directamente dentro de un JSON cualquier propiedad sin tener columnas calculadas o estrategias adicionales.   
+__Complejidad en consultas:__ Las consultas que combinan JSON con relacional pueden volverse más difíciles de leer y mantener.   
+__Puede convertirse en “cajón de sastre”:__ Si se usa JSON sin criterios claros, los datos pueden volverse desordenados e inconsistente la estructura.
 
-CREATE TABLE mascota_json (
-    id_mascota INT NOT NULL PRIMARY KEY,
-    info_mascota NVARCHAR(MAX) NULL,
-    fecha_registro DATE NOT NULL DEFAULT GETDATE()
-);
-GO
+## ¿Por qué y cuándo usar JSON en SQL Server?
+### Por qué usarlo
+Cuando tenés atributos o datos que no siempre existen, o cuya estructura puede cambiar con el tiempo, JSON es útil para evitar modificar el esquema frecuentemente.Además, si recibís datos desde APIs o sistemas externos en formato JSON, puede ser más directo almacenarlos y consultarlos.
 
--- Constraint para asegurar JSON valido
-ALTER TABLE mascota_json
-ADD CONSTRAINT ck_mascota_json_isjson CHECK (ISJSON(info_mascota) > 0);
-GO
+### Cuándo usarlo
+ Se recomienda usar JSON en escenarios como estos:
+* Cuando los datos son semi-estructurados, es decir, tienen cierta consistencia pero no siempre igual para todos los registros.
+* Cuando los valores adicionales son opcionales, poco frecuentes o tienen múltiples formatos posibles.
+* Cuando la estructura puede evolucionar sin querer cambiar el esquema de base de datos cada vez.
 
--- Insertar JSON generado a partir de las tablas relacionales
--- Para obtener el ultimo veterinario que atendio la mascota usamos una subconsulta (TOP 1)
-INSERT INTO mascota_json (id_mascota, info_mascota)
-SELECT
-    m.id_mascota,
-    JSON_QUERY(
-        CONCAT(
-            '{',
-              '"Nombre":"', m.nombre, '", ',
-              '"FechaNacimiento":"', CONVERT(varchar(10), m.fecha_nacimiento, 23), '", ',
-              '"Peso":', REPLACE(CONVERT(varchar(32), m.peso), ',', '.'), ', ',
-              '"Condicion":"', m.condicion, '", ',
-              '"Duenio":"', d.nombre, ' ', d.apellido, '", ',
-              '"Duenio_DNI":"', d.dni, '", ',
-              '"Especie":"', es.nombre, '", ',
-              '"Raza":"', r.nombre, '", ',
-              '"Ultimo_Veterinario":"', ISNULL(
-                    (SELECT TOP 1 v.nombre + '' '' + v.apellido
-                     FROM cita_medica cm
-                     JOIN veterinario v ON cm.id_veterinario = v.id_veterinario
-                     WHERE cm.id_mascota = m.id_mascota
-                     ORDER BY cm.fecha_cita DESC), ''
-                  ), '", ',
-              '"Estado":"Activo"',
-            '}'
-        )
-    )
-FROM mascota m
-JOIN duenio d ON m.id_duenio = d.id_duenio
-JOIN raza r ON m.id_raza = r.id_raza AND m.id_especie = r.id_especie
-JOIN especie es ON m.id_especie = es.id_especie;
-GO
+### Cuándo no usarlo
+Evitalo si:
+* Necesitás consultas frecuentes y complejas sobre esos valores;
+* Los atributos adicionales tienen el mismo formato para cada registro — mejor ponerlos como columnas normales;
+* Necesitás la máxima performance, integridad estricta y normalización del esquema.
 
--- Verificacion rapida
-SELECT * FROM mascota_json;
-GO
+## Operaciones y funciones para el manejo de datos JSON  
+SQL Server ofrece varias **funciones nativas** para manipular y consultar los datos almacenados en formato JSON.
+Las más utilizadas son:  
 
--- =========================
--- Operaciones CRUD sobre JSON
--- =========================
+ | Función         | Descripción                                                 |
+ | --------------- | ----------------------------------------------------------- |
+ | `ISJSON()`      | Verifica si una cadena es un JSON válido.                   |
+ | `JSON_VALUE()`  | Extrae un valor escalar (texto o número) dentro de un JSON. |
+ | `JSON_QUERY()`  | Extrae un objeto o arreglo JSON completo.                   |
+ | `JSON_MODIFY()` | Modifica o agrega elementos dentro del JSON.                |
+ | `OPENJSON()`    | Descompone un JSON en formato tabular (filas y columnas).   |
 
--- 1) Leer: extraer nombre y duenio desde JSON
-SELECT
-  id_mascota,
-  JSON_VALUE(info_mascota, '$.Nombre') AS Nombre,
-  JSON_VALUE(info_mascota, '$.Duenio') AS Duenio,
-  JSON_VALUE(info_mascota, '$.Raza') AS Raza
-FROM mascota_json;
-GO
 
--- 2) Actualizar: modificar Estado a 'En tratamiento' para mascotas mayores a 5 años (edad calculada con fecha_nacimiento dentro del JSON o con la tabla mascota)
--- Usamos la tabla mascota para la condicion (mas simple)
-UPDATE mascota_json
-SET info_mascota = JSON_MODIFY(info_mascota, '$.Estado', 'En tratamiento')
-FROM mascota_json mj
-JOIN mascota m ON mj.id_mascota = m.id_mascota
-WHERE DATEDIFF(YEAR, m.fecha_nacimiento, GETDATE()) > 5;
-GO
+## Caso práctico: Uso de datos JSON en SQL Server en la tabla dueno  
+Para trabajar con JSON en SQL Server primero cambiamos la columna _direccion_duenio_ a NVARCHAR(MAX) para que pueda almacenar texto JSON, para luego insertar un objeto JSON completo. 
 
--- 3) Agregar propiedad: Ultima_Consulta con fecha
-UPDATE mascota_json
-SET info_mascota = JSON_MODIFY(info_mascota, '$.Ultima_Consulta', CONVERT(varchar(10), GETDATE(), 23));
-GO
+![image alt](imga/insercion_objeto_JSON_columna.png)    
 
--- 4) Eliminar propiedad: eliminar Peso para id_mascota = 2 (estableciendo NULL)
-UPDATE mascota_json
-SET info_mascota = JSON_MODIFY(info_mascota, '$.Peso', NULL)
-WHERE id_mascota = 2;
-GO
+Tambien a partir de un JSON se puede usar JSON_VALUE para extraer cada campo del JSON y cargarlo en las columnas individuales del registro.  
 
--- 5) Usar OPENJSON para descomponer un registro en columnas
-SELECT *
-FROM OPENJSON((SELECT info_mascota FROM mascota_json WHERE id_mascota = 1))
-WITH (
-    Nombre NVARCHAR(100) '$.Nombre',
-    FechaNacimiento DATE '$.FechaNacimiento',
-    Peso FLOAT '$.Peso' AS JSON,
-    Condicion NVARCHAR(100) '$.Condicion',
-    Duenio NVARCHAR(200) '$.Duenio',
-    Ultimo_Veterinario NVARCHAR(200) '$.Ultimo_Veterinario'
-);
-GO
+![image alt](imga/insercion_objeto_JSON_registro.png)    
 
--- =========================
--- Consultas de ejemplo que usan JSON_VALUE / JSON_QUERY
--- =========================
+Para visualizar los datos JSON se puede hacer   
+![image alt](imga/muestra_JSON_almacenado_columna.png)  
+La función ISJSON() devuelve 1 si el contenido es un JSON válido, ayudando a mantener la integridad de los datos.  
 
--- Mascotas 'En tratamiento'
-SELECT id_mascota, JSON_VALUE(info_mascota, '$.Nombre') AS Nombre,
-       JSON_VALUE(info_mascota, '$.Estado') AS Estado
-FROM mascota_json
-WHERE JSON_VALUE(info_mascota, '$.Estado') = 'En tratamiento';
-GO
+Salida  
+![image alt](imga/salida_JSON_almacenado_columna.png)  
 
--- Mascotas atendidas por veterinario 'Gomez' (busqueda por cadena)
-SELECT id_mascota, JSON_VALUE(info_mascota, '$.Nombre') AS Nombre,
-       JSON_VALUE(info_mascota, '$.Ultimo_Veterinario') AS UltimoVet
-FROM mascota_json
-WHERE JSON_VALUE(info_mascota, '$.Ultimo_Veterinario') LIKE '%Gomez%';
-GO
+Tambien se puede usar JSON_VALUE si querés mostrar valores individuales del JSON como columnas normales en el resultado.  
+![image alt](imga/muestra_registros_formato_JSON.png)  
+Salida  
+![image alt](imga/salida_registros_formato_JSON.png)  
+![image alt](imga/muestra_registros_con_JSON_descompuesto.png)  
+Salida
+![image alt](imga/salida_registros_con_JSON_descompuesto.png)    
 
--- Mascotas cuya especie sea 'Perro' y estan activas
-SELECT id_mascota, JSON_VALUE(info_mascota, '$.Nombre') AS Nombre
-FROM mascota_json
-WHERE JSON_VALUE(info_mascota, '$.Especie') = 'Perro'
-  AND JSON_VALUE(info_mascota, '$.Estado') = 'Activo';
-GO
+## Conclusión
+El manejo de datos JSON en SQL Server permite combinar la **estructura relacional tradicional** con la **flexibilidad de los documentos semiestructurados.**
+Gracias a sus funciones nativas **(JSON_VALUE, JSON_QUERY, JSON_MODIFY, OPENJSON)**, es posible almacenar, consultar y modificar información de manera eficiente.
+Al aplicar buenas prácticas de validación e indexación, el uso de JSON puede ser una excelente solución para escenarios de integración, configuración dinámica o intercambio de datos entre sistemas.
+El manejo de datos JSON en SQL Server es una herramienta poderosa para escenarios donde existe variabilidad en los datos, atributos opcionales y una necesidad de flexibilidad en el modelo. En el contexto de gestión de citas veterinarias, permite tratar de forma elegante aquellos datos adicionales de mascotas, clientes o tratamientos que no encajan perfectamente en un esquema rígido.
+Sin embargo, y esto es importante, no debe verse como sustituto del modelo relacional clásico: los datos que se usan frecuentemente para filtrar, agrupar, relacionar deberían permanecer en columnas normales estructuradas. El JSON debe usarse con criterio, donde aporte valor real.
+Cuando se lo emplea correctamente, mejora agilidad de desarrollo y adaptabilidad. Si se lo abusa, puede generar problemas de rendimiento, mantenimiento y consistencia.
 
--- =========================
---  Optimizacion: columnas calculadas, persistidas e indices
--- =========================
 
--- Agregar columnas calculadas basadas en JSON (persistidas cuando posible)
--- Nota: para persistir, la expresion debe ser determinista. JSON_VALUE es determinista si la columna es NVARCHAR constante.
-ALTER TABLE mascota_json
-ADD
-    Nombre AS JSON_VALUE(info_mascota, '$.Nombre') PERSISTED,
-    Especie AS JSON_VALUE(info_mascota, '$.Especie') PERSISTED,
-    Estado AS JSON_VALUE(info_mascota, '$.Estado') PERSISTED,
-    Edad AS TRY_CAST(LEFT(JSON_VALUE(info_mascota, '$.FechaNacimiento'), 4) AS INT); -- aproximacion simple (anio) -- alternativa: calcular desde tabla mascota
-GO
-
--- Crear indice para busquedas frecuentes por Estado y Especie
-IF NOT EXISTS (SELECT * FROM sys.indexes WHERE name = 'IDX_MascotaJSON_Estado_Especie' AND object_id = OBJECT_ID('mascota_json'))
-BEGIN
-    CREATE INDEX IDX_MascotaJSON_Estado_Especie ON mascota_json(Estado, Especie) INCLUDE (Nombre, Edad);
-END
-GO
-
--- Consulta optimizada que ahora puede usar index seek
-SELECT Nombre, Especie, Edad
-FROM mascota_json
-WHERE Estado = 'En tratamiento' AND Especie = 'Perro';
-GO
-
--- Mostrar plan de ejecucion (ejecutar en SSMS con Actual Execution Plan ON)
-SELECT Nombre, Especie, Edad
-FROM mascota_json
-WHERE Estado = 'Activo' AND Especie = 'Perro';
-GO
-
--- =========================
--- Limpieza / Opcional: eliminar tabla JSON o indices si hace falta
--- =========================
--- DROP INDEX IDX_MascotaJSON_Estado_Especie ON mascota_json;
--- DROP TABLE mascota_json;
 
 
