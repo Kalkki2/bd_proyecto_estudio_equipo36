@@ -9,10 +9,10 @@
 - Diaz, Federico Hilario
 
 ## Índice
-- [Capítulo I: Introducción](#capítulo-i-introducción)
+- [Capítulo I: INTRODUCCION](#capítulo-i-introducción)
 - [CAPÍTULO II: MARCO CONCEPTUAL O REFERENCIAL](#capítulo-ii-marco-conceptual-o-referencial)
 - [CAPÍTULO III: METODOLOGÍA](#capítulo-iii-metodología)
-- [Capítulo IV: Desarrollo del Tema / Resultados](#capítulo-iv-desarrollo-del-tema--resultados)
+- [Capítulo IV: DESARROLLO DEL TEMA / RESULTADOS](#capítulo-iv-desarrollo-del-tema--resultados)
 - [CAPÍTULO V: CONCLUSIONES](#capítulo-v-conclusiones)
 - [CAPÍTULO VI: BIBLIOGRAFÍA](#capítulo-vi-bibliografía)
 
@@ -215,7 +215,7 @@ Una transacción es una unidad lógica de trabajo en la que se agrupan una o var
 
 ### Desarrollo TEMA 4: Manejo de datos JSON
 El manejo de datos en formato **JSON (JavaScript Object Notation)** ha cobrado gran relevancia en los sistemas actuales debido a su flexibilidad, legibilidad y facilidad para intercambiar información entre aplicaciones.
-> Acceder a la siguiente carpeta para la descripción completa del tema [scripts->tema04_Manejo_de_Datos_JSON]
+> Acceder a la siguiente carpeta para la descripción completa del tema [scripts->tema04_Manejo_de_Datos_JSON](script/tema04_Manejo_de_Datos_JSON)
 
 ## CAPÍTULO V: CONCLUSIONES
 

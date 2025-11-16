@@ -41,7 +41,7 @@ Crear un índice agrupado sobre fecha_citaMedica mejora el rendimiento de las co
 ya que los datos estarán físicamente ordenados por esa columna, lo que permite un acceso más rápido.
 
 ![Con Indice](img/script_con_indice.PNG)
-![Con Indice](img/tiempo_consulta_con_indice.JPG)
+![Con Indice](img/tiempo_consulta_con_indice.PNG)
 ![Con Indice](img/plan_ejecucion_con_indice.PNG)
 
 ### citas_medica (Con indice) utilizando mas de una columna
@@ -50,8 +50,8 @@ Incluir las columnas adicionales en el índice agrupado mejora aún más el rend
 Esto significa que SQL Server no tiene que realizar una búsqueda adicional de datos en la tabla; 
 toda la información necesaria está contenida en el índice.
 ![Con Indice varias columnas](img/script_indice_agrupado.PNG)
-![Con Indice varias columnas](img/tiempo_consulta_indice_agrupado)
-![Con Indice varias columnas](img/plan_ejecucion_indice_agrupado)
+![Con Indice varias columnas](img/tiempo_consulta_indice_agrupado.PNG)
+![Con Indice varias columnas](img/plan_ejecucion_indice_agrupado.PNG)
 
 Impacto de los planes de ejecución: El plan de ejecución mostrará cambios en la forma en que SQL Server accede a los datos.
 Con un índice agrupado, deberías ver que se está utilizando un índice de búsqueda más eficiente en lugar de un escaneo de tabla.
