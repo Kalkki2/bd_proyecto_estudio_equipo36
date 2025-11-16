@@ -10,12 +10,15 @@ Luego inserta JSON al registro:
 ![image alt](img/insert_JSON.png)
 
 # Ahora prueba JSON_VALUE (para valores simples):
+
 ![image alt](img/prueba_VALUE.png)
 
 Resultado esperado:
+
 ![image alt](img/resultado.png)
 
 # Prueba JSON_QUERY (para objetos o arrays):
+
 ![image alt](img/prueba_QUERY.png)
 
 Resultado esperado:
