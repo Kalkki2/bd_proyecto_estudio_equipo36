@@ -1,7 +1,6 @@
 # PRESENTACIÓN: Sistema de Gestion de Informacion para Clinica Veterinaria
 
 
-
 **Asignatura: Bases de Datos I (FaCENA-UNNE)**
 
 **Integrantes**
@@ -207,6 +206,16 @@ Un procedimiento almacenado en SQL Server es un conjunto de instrucciones SQL o 
 Un índice en una base de datos es una estructura adicional, es una estructura de disco asociada y contiene claves generadas a partir de una o varias columnas de la tabla o la vista... 
 
 > Acceder a la siguiente carpeta para la descripción completa del tema [scripts-> Optimizacion de Consultas atravez de Indices](script/tema02_optimizacionConsultasAtravezdeIndices)
+
+### Desarrollo TEMA 3: Transacciones y Transacciones Anidadas
+
+Una transacción es una unidad lógica de trabajo en la que se agrupan una o varias operaciones de base de datos (como INSERT, UPDATE, DELETE, incluso SELECT en ciertos casos) que deben ejecutarse como un todo. En SQL Server, cualquier modificación de datos puede estar contenida dentro de una transacción explícita o implícita.
+
+> Acceder a la siguiente carpeta para la descripción completa del tema [scripts->tema03_transaccionesYTransaccionesAnidadas](script/tema03_transaccionesYTransaccionesAnidadas)
+
+### Desarrollo TEMA 4: Manejo de datos JSON
+El manejo de datos en formato **JSON (JavaScript Object Notation)** ha cobrado gran relevancia en los sistemas actuales debido a su flexibilidad, legibilidad y facilidad para intercambiar información entre aplicaciones.
+> Acceder a la siguiente carpeta para la descripción completa del tema [scripts->tema04_Manejo_de_Datos_JSON]
 
 ## CAPÍTULO V: CONCLUSIONES
 

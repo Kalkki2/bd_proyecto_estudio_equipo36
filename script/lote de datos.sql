@@ -1,4 +1,4 @@
-USE gestion_citas_veterinaria;
+--USE gestion_citas_veterinaria;
 
 -- Insertar especies de animales
 INSERT INTO especie (nombre_especie) VALUES ('Canis lupus');       -- Lobo
@@ -636,7 +636,6 @@ SELECT * FROM citas_medica;
 SELECT * FROM tratamiento;
 SELECT * FROM tratamiento_medicamento;
 
-
 -- Contador de registro total
 SELECT 
 t.name
@@ -646,7 +645,6 @@ INNER JOIN sys.partitions AS p ON t.object_id = p.object_id
 WHERE p.index_id IN (0, 1)  -- 0 para heaps (tablas sin índice clustered) y 1 para índices clustered
 GROUP BY 
 t.name ORDER BY row_count DESC; 
-
 
 -- Salida esperada : 
 

@@ -31,23 +31,27 @@ Los índices se crean automáticamente cuando las restricciones PRIMARY KEY y UN
 ### citas_medica (Sin indice)
 Rendimiento de la consulta sin índice agrupado: Al ejecutar la consulta sin índice,
 el motor de SQL Server tendrá que realizar un escaneo completo de la tabla, lo cual puede ser lento si la tabla tiene muchos registros.
-![Sin indice](img/tiempo_sin_indice.JPG)
-![Sin indice](img/consulta.JPG)
+![Sin indice](img/script_sin_indice.PNG)
+![Sin indice](img/tiempo_consulta_sin_indice.PNG)
+![Sin indice](img/plan_ejecucion_sin_indice.PNG)
 
 ### citas_medica (Con indice) utilizando solo una columna
-Mejora con el índice agrupado sobre fecha_nacimiento: 
-Crear un índice agrupado sobre fecha_nacimiento mejora el rendimiento de las consultas que filtran por esa columna, 
+Mejora con el índice agrupado sobre fecha_citaMedica: 
+Crear un índice agrupado sobre fecha_citaMedica mejora el rendimiento de las consultas que filtran por esa columna, 
 ya que los datos estarán físicamente ordenados por esa columna, lo que permite un acceso más rápido.
-![Con Indice](img/tiempo_con_indice.JPG)
-![Con Indice](img/consulta2.JPG)
+
+![Con Indice](img/script_con_indice.PNG)
+![Con Indice](img/tiempo_consulta_con_indice.JPG)
+![Con Indice](img/plan_ejecucion_con_indice.PNG)
 
 ### citas_medica (Con indice) utilizando mas de una columna
 Mejora adicional con el índice agrupado que incluye las columnas seleccionadas: 
 Incluir las columnas adicionales en el índice agrupado mejora aún más el rendimiento, ya que cubre toda la consulta. 
 Esto significa que SQL Server no tiene que realizar una búsqueda adicional de datos en la tabla; 
 toda la información necesaria está contenida en el índice.
-![Con Indice varias columnas](img/tiempo_con_indice_varias_columnas.JPG)
-![Con Indice varias columnas](img/consulta3.JPG)
+![Con Indice varias columnas](img/script_indice_agrupado.PNG)
+![Con Indice varias columnas](img/tiempo_consulta_indice_agrupado)
+![Con Indice varias columnas](img/plan_ejecucion_indice_agrupado)
 
 Impacto de los planes de ejecución: El plan de ejecución mostrará cambios en la forma en que SQL Server accede a los datos.
 Con un índice agrupado, deberías ver que se está utilizando un índice de búsqueda más eficiente en lugar de un escaneo de tabla.

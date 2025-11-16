@@ -1,9 +1,9 @@
-USE gestion_citas_veterinaria;
+--USE gestion_citas_veterinaria;
 -- Duplicar los datos
 
 INSERT INTO especie (nombre_especie) SELECT nombre_especie FROM especie;
 
-INSERT INTO raza (nombre_raza) SELECT nombre_raza FROM raza;
+INSERT INTO raza (nombre_raza, id_especie) SELECT nombre_raza, id_especie FROM raza;
 
 --ROW_NUMBER devuelve el número secuencial de una fila dentro de una partición de un conjunto de resultados
 --OVER : Espesifica que es un funcion de ventana
@@ -52,36 +52,7 @@ FROM Medicamento;
 
 --INICIO DE LA FUNCION DUPLICAR VET 
 -- Ejecutar varias veces para poder llegar al millon de insersiones en cita medica 
-WITH CTE AS (
-    SELECT  nro_licProfesional + ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS nuevo_nro_licProfesional,
-            nombre_profesional,
-            hora_entrada,
-            hora_salida,
-            id_especialidad
-    FROM veterinario
-)
-INSERT INTO veterinario (nro_licProfesional, nombre_profesional, hora_entrada, hora_salida, id_especialidad)
-SELECT  nuevo_nro_licProfesional,
-        nombre_profesional,
-        hora_entrada,
-        hora_salida,
-        id_especialidad
-FROM CTE
-WHERE NOT EXISTS (
-    SELECT 1 
-    FROM veterinario v 
-    WHERE v.nro_licProfesional = CTE.nuevo_nro_licProfesional
-);
 
---FIN DE LA FUNCION DUPLICAR VET
-
-INSERT INTO citas_medica (fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario)
-SELECT fecha_citaMedica, observaciones_citaMedica, usuario, motivo_visita, id_mascota, id_veterinario
-FROM citas_medica;
-
-INSERT INTO tratamiento (nombre_tratamiento, inicio_tratamiento, fin_tratamiento, id_citaMedica)
-SELECT nombre_tratamiento, inicio_tratamiento, fin_tratamiento, id_citaMedica
-FROM tratamiento;
 
 -- Creacion de datos tratamiento_medicamento
 
